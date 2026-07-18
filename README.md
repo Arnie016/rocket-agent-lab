@@ -2,11 +2,29 @@
 
 Interactive 3D rocket education prototype with nine Three.js rocket models, structured lessons, part picking, focused/all label modes, live challenge checklists, before/after slider impact readouts, physics equations, hardware/cost/failure breakdowns, WhatsApp sharing, and Astra, an OpenAI Realtime voice tutor with a prompt bar for scene-aware questions and replies.
 
+The Build Week judge path is deliberately short: open Flight, press **Run engine-out**, inspect the deterministic before/after proof, then ask Realtime to coach from that exact receipt. The proof remains available without an API key; live voice requires a server-side key.
+
 The viewport uses orbit-camera inspection with horizontal rotation, vertical pitch, shift-drag stack panning, ray-picked rocket parts, inspection shortcuts for engines/tanks/payload/thermal loads, split/cutaway modes, fuel and payload callouts, launch-pad environment detail, ignition plumes, shock diamonds, Max-Q pressure waves, staging flashes, heat glow, smoke, and ascent camera following. The Flight Lab adds beginner-readable orbit, escape, heavy-payload, and Max-Q stress tests with wind shear, guidance error, launch/fail/pass states, animated breakup, staged delta-v, mass ratio, live mass, peak Max-Q, risk, slider threshold cues, and mission margin from the same classroom model.
 
 The selected-part panel includes educational estimates for mass, relative cost driver, materials, failure watchpoints, and optimization levers. Failure states now show a causal chain such as mass ratio loss, Max-Q overload, or wind/guidance coupling. These are learning approximations, not procurement-grade cost or mass data.
 
 The 3D renderer is local/offline: `rocket-three-scene.js` imports vendored Three.js files from `vendor/`.
+
+## Supported platforms
+
+- macOS, Windows, or Linux
+- Node.js 20+
+- A current Chromium, Firefox, or Safari browser
+- Microphone permission and a server-side OpenAI API key only for the optional live Realtime voice path
+
+## Judge smoke test
+
+```bash
+node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+node --check app.js
+```
+
+Then open the local app and run the engine-out lesson. Representative browser proof is stored at `outputs/rocket-agent-lab-engine-out-proof-card-2026-07-19.png`.
 
 ## Run
 
@@ -38,6 +56,10 @@ For Vercel, set `OPENAI_API_KEY` as a project environment variable. The matching
 ### Authorized human Realtime check
 
 The local causal-context and data-channel tests are not a substitute for a live voice result. Before a demo or submission claim, run exactly one authorized microphone/WebRTC session using [`outputs/realtime-human-test-protocol-2026-07-18.md`](outputs/realtime-human-test-protocol-2026-07-18.md). It records only the selected scene, changed value, visible connection state, and pass/fail outcome—never an API key or raw SDP.
+
+## Build Week collaboration and provenance
+
+Every capability presented for judging was built after July 13, 2026. The primary Codex build task is `019f5e81-8bde-79d1-b2d6-416776726a63`. Codex/GPT-5.6 helped isolate the causal context contract, identify stale-state and opening-turn failure modes, build tests, and implement the deterministic proof surface. Human decisions kept simulation outcomes deterministic, restricted GPT to explanation/coaching, separated Rocket Agent Lab from Light Years From Home, and preserved the live-microphone test as an explicit human gate.
 
 ## Physics Sheet
 

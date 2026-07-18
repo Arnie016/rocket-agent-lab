@@ -1,0 +1,20 @@
+Rocket Agent Lab — Realtime live-close cleanup proof
+Run: 2026-07-18T22:22:55+0800
+
+Change
+- Normal Realtime closure now routes its peer connection and microphone stream through releaseRealtimeResources(), the same best-effort cleanup helper used by failed setup.
+- The data channel is still closed directly before peer-and-stream cleanup.
+
+Checks
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+  PASS: 3 tests, 0 failures
+- node --check app.js
+  PASS
+- node --check server.mjs
+  PASS
+- local HTTP GET http://127.0.0.1:5186/
+  PASS: 200, body contains Rocket Agent Lab
+
+Boundary
+- HUMAN_TEST=BLOCKED. No microphone, WebRTC connection, or paid Realtime request was made.
+- This proves the local close-path wiring only; it does not prove a live tutor response.

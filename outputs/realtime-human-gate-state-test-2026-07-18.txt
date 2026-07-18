@@ -1,0 +1,15 @@
+Rocket Agent Lab — Realtime human-gate state regression
+Date: 2026-07-18
+
+Bounded change
+- Added a no-network assertion that the live companion control displays the exact connected evidence state: `Realtime live`.
+- This protects the authorized human-test protocol and evidence template from drifting away from the browser-visible state.
+
+Checks passed
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs (3/3)
+- node --check app.js
+- node --check server.mjs
+- local HTTP GET http://127.0.0.1:5186/ returned 200 and contained `Rocket Agent Lab`
+
+Limit
+- HUMAN_TEST=BLOCKED. No microphone permission, WebRTC connection, or Realtime API call was made in this run.

@@ -1,0 +1,18 @@
+Rocket Agent Lab — Realtime data-channel-close cleanup proof
+Date: 2026-07-19
+
+Bounded change
+- An unexpected live `oai-events` data-channel close now releases the Realtime companion and shows a reconnectable status. The guard ignores stale/non-live channels, so an intentional end is not reported as a drop.
+
+Verified commands
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+  Result: 3 passing, 0 failing.
+- node --check app.js
+  Result: passed.
+- node --check server.mjs
+  Result: passed.
+- node server.mjs with bounded local HTTP GET /
+  Result: HTTP/1.1 200 OK; response contained Rocket Agent Lab.
+
+Human-test boundary
+- HUMAN_TEST=BLOCKED. No microphone/WebRTC session was authorized or run. This is a local wiring regression proof only and does not establish a live grounded tutor reply.

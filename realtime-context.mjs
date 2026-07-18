@@ -19,13 +19,14 @@ export function buildRealtimeCausalContext({ voiceStyle, rocket, part, lesson, s
 }
 
 export function buildRealtimeOpeningTutorContext(context) {
-  return `${buildRealtimeCausalContext(context)} Opening turn: greet from this exact lab state, then ask one question about the selected rocket, part, or lesson.`;
+  return `${buildRealtimeCausalContext(context)} Opening turn: greet from this exact lab state by naming the selected rocket, part, lesson, and voice style ID, then ask one question about the selected rocket, part, or lesson.`;
 }
 
 export function buildRealtimeSubsequentTutorContext(context, { mode = "scene", recentConversation = "No prior turns in this session.", learnerEvent = "" } = {}) {
   return [
     buildRealtimeCausalContext(context),
     `Tutor mode: ${text(mode, "scene")}.`,
+    "Ground the response in the current rocket, selected part, lesson, voice style ID, and any learner-changed simulation value relevant to the event.",
     `Recent conversation: ${text(recentConversation, "No prior turns in this session.")}.`,
     `Learner event: ${text(learnerEvent, "Continue from the live lab state.")}.`,
   ].join("\n\n");

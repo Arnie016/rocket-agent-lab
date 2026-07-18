@@ -9,6 +9,15 @@
 - Human test: complete `outputs/realtime-human-test-evidence-template.md` during one connected session; capture both the opening selected-state response and the changed-slider response.
 - Next move: run that one authorized microphone/WebRTC session; do not add visual polish before it passes.
 
+## 2026-07-18 — Realtime live-close cleanup parity
+
+- Change: normal Realtime closure now uses `releaseRealtimeResources()` for the active peer connection and microphone stream, matching failed-setup cleanup while preserving direct data-channel closure.
+- Checks: `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed (3/3); `node --check app.js` and `node --check server.mjs` passed; local HTTP GET `/` returned 200 and contained `Rocket Agent Lab`.
+- Proof: `outputs/realtime-live-close-cleanup-test-2026-07-18.txt`.
+- Blocker: `HUMAN_TEST=BLOCKED`; no authorized microphone/WebRTC session or Realtime request was run. Local cleanup wiring cannot establish a live tutor response.
+- Human test: complete `outputs/realtime-human-test-evidence-template.md` during one connected session; record the selected-state opening response and the changed-slider response.
+- Next move: run that one authorized microphone/WebRTC session; do not add visual polish before it passes.
+
 ## 2026-07-18 — Realtime error retry recovery
 
 - Change: the Realtime data-channel error path now closes the local session before reporting the failure, so microphone/WebRTC resources are released and the visible control cannot remain falsely live; added a no-network client-wiring assertion for that recovery behavior.
@@ -136,3 +145,37 @@
 - Blocker: `HUMAN_TEST=BLOCKED`; no authorized microphone/WebRTC session was run, and source-level wiring cannot prove a live tutor response.
 - Human test: complete `outputs/realtime-human-test-evidence-template.md` during one connected session; capture both the opening selected-state response and the changed-slider response.
 - Next move: run that one authorized microphone/WebRTC session; do not add visual polish before it passes.
+
+## 2026-07-18 — Realtime human-gate status regression
+
+- Change: added one no-network assertion that the connected Voice companion control exposes `Realtime live`, the exact status named by the authorized human-test protocol and evidence template.
+- Checks: `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed (3/3); `node --check app.js` and `node --check server.mjs` passed; local HTTP GET `/` returned 200 and contained `Rocket Agent Lab`.
+- Proof: `outputs/realtime-human-gate-state-test-2026-07-18.txt`.
+- Blocker: `HUMAN_TEST=BLOCKED`; no authorized microphone/WebRTC session was run. This label regression does not establish a live tutor response.
+- Human test: complete `outputs/realtime-human-test-evidence-template.md` during one connected session; record the selected-state opening response and the changed-slider response.
+- Next move: run that one authorized microphone/WebRTC session; do not add visual polish before it passes.
+
+## 2026-07-19 — Realtime human-response instruction proof
+
+- Change: tightened the pure opening and subsequent Realtime contexts so the opening reply is explicitly instructed to name the selected rocket, part, lesson, and voice-style ID, while later turns are explicitly instructed to ground in the current selected state and relevant changed simulation value. This aligns the outgoing instruction contract with the authorized human-test pass rule.
+- Checks: `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed (3/3); `node --check realtime-context.mjs`, `node --check app.js`, and `node --check server.mjs` passed; local HTTP GET `/` returned `HTTP/1.1 200 OK` and contained `Rocket Agent Lab`.
+- Proof: `outputs/realtime-human-response-instruction-test-2026-07-19.txt`.
+- Blocker: `HUMAN_TEST=BLOCKED`; an authorized microphone/WebRTC session is still required to prove the live tutor actually follows these causal instructions.
+- Human test: complete `outputs/realtime-human-test-evidence-template.md` during one connected session, recording the opening selected-state response and the changed-slider response.
+- Next move: run that one authorized microphone/WebRTC session; do not add visual polish before it passes.
+## 2026-07-19 — Realtime data-channel-close retry cleanup
+
+- Change: an unexpected live Realtime `oai-events` data-channel close now releases the companion and provides a reconnectable status, while stale/non-live channel closes are ignored.
+- Checks: `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed (3/3); `node --check app.js` and `node --check server.mjs` passed; bounded-retry local HTTP GET `/` returned 200 and contained `Rocket Agent Lab`.
+- Proof: `outputs/realtime-data-channel-close-cleanup-test-2026-07-19.txt`.
+- Blocker: `HUMAN_TEST=BLOCKED`; no authorized microphone/WebRTC session was run, so this no-network cleanup proof does not establish a live grounded tutor reply.
+- Human test: complete `outputs/realtime-human-test-evidence-template.md` during one connected session; record the selected-state opening response and the changed-slider response.
+- Next move: run that one authorized microphone/WebRTC session; do not add visual polish before it passes.
+## 2026-07-19 — causal engine-out proof vertical slice
+
+- Change: added a deterministic engine-out evaluator and a compact in-product before/after proof card. The learner can hold the configuration constant, reduce engine health from 100% to 67%, see the exact T/W, delta-v, Max-Q, and modeled-risk consequences, then ask GPT Realtime to coach from that receipt.
+- Checks: `node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed (4/4); `node --check app.js` passed; the real browser produced `NO LIFTOFF`, `1.23 → 0.82` T/W, an enabled proof-grounded Realtime action, and zero console errors.
+- Proof: `outputs/rocket-agent-lab-engine-out-proof-card-2026-07-19.png` and `test/causal-engine-lesson.test.mjs`.
+- Devpost: founder-voice draft written in `DEVPOST_DRAFT.md`; README now includes supported platforms, judge smoke, exact Build Week session, and provenance.
+- Blocker: the deterministic loop is verified, but a live authorized microphone/WebRTC response and final public demo video remain human gates.
+- Stop: do not add more rocket catalog breadth. Next work is repository/judge access, Devpost metadata, the one live voice check, and video.

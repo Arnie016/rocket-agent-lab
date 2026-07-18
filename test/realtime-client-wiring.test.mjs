@@ -30,8 +30,23 @@ assert.match(
 );
 assert.match(
   app,
+  /dc\.onclose\s*=\s*\(\) => \{[\s\S]*?state\.voiceRealtimeDc !== dc \|\| !state\.voiceRealtimeConnected[\s\S]*?closeRealtimeCompanion\(\{ quiet: true \}\);/,
+  "an unexpected data-channel close must release the live session instead of leaving a stale connected control",
+);
+assert.match(
+  app,
+  /function closeRealtimeCompanion\(\{ quiet = false \} = \{\}\) \{[\s\S]*?state\.voiceRealtimeDc\?\.close\?\.\(\);[\s\S]*?releaseRealtimeResources\(\{\s*peerConnection: state\.voiceRealtimePc,\s*stream: state\.voiceRealtimeStream,\s*\}\);/,
+  "normal live-session closure must use the shared peer-and-microphone cleanup path",
+);
+assert.match(
+  app,
   /\["failed", "disconnected"\]\.includes\(pc\.connectionState\) && \(state\.voiceRealtimeConnected \|\| state\.voiceRealtimeConnecting\)[\s\S]*?releaseRealtimeResources\(\{ peerConnection: pc, stream \}\);/,
   "a failed or dropped peer connection must release both live and still-connecting local resources",
 );
+assert.match(
+  app,
+  /els\.voiceStatus\.textContent = state\.voiceRealtimeConnected\s*\? "Realtime live"/,
+  "the connected companion control must expose the exact human-test connection state",
+);
 
-console.log("Realtime client wiring: the SDP request uses the pure opening context, later data-channel turns take a fresh snapshot, early data-channel opens are retried once after the live state is ready, and data-channel or peer-connection failures release local resources for a clean retry.");
+console.log("Realtime client wiring: the SDP request uses the pure opening context, later data-channel turns take a fresh snapshot, early data-channel opens are retried once after the live state is ready, unexpected data-channel closure plus normal closure or peer-connection failures release local resources for a clean retry, and the connected control exposes the exact Realtime live human-test state.");

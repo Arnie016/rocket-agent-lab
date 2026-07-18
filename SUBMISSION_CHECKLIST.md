@@ -4,7 +4,7 @@ Deadline: **July 21, 2026, 5:00 PM PT**. This is a live status ledger, not a cla
 
 | Gate | Status | Evidence / next action |
 | --- | --- | --- |
-| Build and run proof | Local proof present | `node server.mjs` serves the app at `http://127.0.0.1:5186`; latest opening-turn race proof: `outputs/realtime-opening-turn-race-test-2026-07-18.txt`. Re-run before handoff. |
+| Build and run proof | Local proof present | `node server.mjs` serves the app at `http://127.0.0.1:5186`; latest cleanup-path proof: `outputs/realtime-live-close-cleanup-test-2026-07-18.txt`. Re-run before handoff. |
 | Primary / feedback Session ID | Missing | Record the exact Codex session ID used for the feedback pass. |
 | GPT-5.6 contribution | Missing documentation | Record one meaningful GPT-5.6 task, exact session ID, the changed files, and the human decision that accepted or corrected it. Do not use a generic model claim. |
 | Demo video | Draft asset exists; human action required | Existing local trailer: `trailer/out/rocket-agent-lab-trailer.mp4`. Before recording/uploading, prepare a <3 min outline that shows the running causal voice path and Codex/GPT-5.6 contribution. No autonomous publishing. |

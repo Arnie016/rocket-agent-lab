@@ -33,7 +33,9 @@ assert.ok(!subsequent.includes("T/W 1.42"), "subsequent context retained stale t
 assert.ok(!subsequent.includes("altitude 12.4 km"), "subsequent context retained stale altitude");
 assert.ok(!subsequent.includes("Max-Q 34 kPa"), "subsequent context retained stale Max-Q");
 assert.ok(opening.includes("Opening turn"));
+assert.ok(opening.includes("naming the selected rocket, part, lesson, and voice style ID"));
 assert.ok(subsequent.includes("Tutor mode: slider-change"));
+assert.ok(subsequent.includes("Ground the response in the current rocket, selected part, lesson, voice style ID"));
 assert.ok(subsequent.includes("Learner increased payload mass"));
 
 const [messageEvent, responseEvent] = buildRealtimeTutorTurnEvents(afterPayloadChange, {
@@ -49,4 +51,4 @@ for (const fact of ["mission-control", "Saturn V", "F-1-class engine", "Max-Q an
   assert.ok(wireText.includes(fact), `data-channel tutor event missing ${fact}`);
 }
 assert.ok(!wireText.includes("T/W 1.42"), "data-channel tutor event retained stale thrust-to-weight");
-console.log("Realtime causal context: opening state and subsequent changed simulation state retain rocket, part, lesson, and voice style without stale live values; the data-channel event carries the updated state.");
+console.log("Realtime causal context: opening instructions require the selected scene and voice-style ID, while subsequent instructions require the current changed state without stale live values; the data-channel event carries the updated state.");

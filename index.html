@@ -485,6 +485,20 @@
             <div><span>Max-Q change</span><strong id="deltaQ">0 kPa</strong></div>
             <div><span>Risk change</span><strong id="deltaRisk">0%</strong></div>
           </div>
+          <section class="causal-proof" id="causalEngineProof" data-state="ready" aria-label="Causal engine lesson proof">
+            <div class="causal-proof-head">
+              <div><span>Causal engine lab</span><strong id="causalProofVerdict">READY TO TEST</strong></div>
+              <button id="runEngineLesson" type="button">Run engine-out</button>
+            </div>
+            <p id="causalProofReason">Hold every variable constant, reduce engine health once, and prove what changed before asking the tutor.</p>
+            <div class="causal-proof-grid">
+              <div><span>Engine health</span><strong id="causalProofControl">100% → 67%</strong></div>
+              <div><span>Thrust / weight</span><strong id="causalProofTwr">—</strong></div>
+              <div><span>Δv consequence</span><strong id="causalProofDv">—</strong></div>
+              <div><span>Modeled flight risk</span><strong id="causalProofRisk">—</strong></div>
+            </div>
+            <button id="askEngineLesson" class="ghost-button" type="button" disabled>Ask Realtime from this proof</button>
+          </section>
           <div class="mission-readout">
             <div>
               <span>Goal speed</span>

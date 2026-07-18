@@ -4675,6 +4675,27 @@ a.case-chip {
   color: var(--muted);
 }
 
+.causal-proof {
+  display: grid;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid rgba(246, 177, 74, 0.28);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(246, 177, 74, 0.09), rgba(7, 15, 23, 0.72));
+}
+
+.causal-proof[data-state="critical"] { border-color: rgba(255, 112, 92, 0.62); }
+.causal-proof[data-state="pass"] { border-color: rgba(121, 255, 211, 0.44); }
+.causal-proof-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.causal-proof-head span,
+.causal-proof-grid span { display: block; color: var(--muted); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+.causal-proof-head strong { display: block; margin-top: 3px; font-size: 13px; color: #ffd59b; }
+.causal-proof p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.causal-proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.causal-proof-grid div { padding: 7px; border-radius: 7px; background: rgba(255,255,255,0.035); }
+.causal-proof-grid strong { display: block; margin-top: 3px; font-size: 11px; }
+.causal-proof button { min-height: 32px; }
+
 .control-cues {
   display: grid;
   grid-template-columns: 1fr 1fr;

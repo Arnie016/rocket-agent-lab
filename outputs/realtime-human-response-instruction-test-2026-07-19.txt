@@ -1,0 +1,18 @@
+Rocket Agent Lab — Realtime human-response instruction proof
+Date: 2026-07-19
+
+Change verified
+- Opening context explicitly requires naming the selected rocket, part, lesson, and voice-style ID.
+- Subsequent context explicitly requires grounding in the current rocket, part, lesson, voice-style ID, and any relevant learner-changed simulation value.
+
+Commands passed
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+  Result: 3 passed, 0 failed.
+- node --check realtime-context.mjs
+- node --check app.js
+- node --check server.mjs
+- curl -fsS -D - http://127.0.0.1:5186/ -o /tmp/rocket-agent-lab-home.html
+  Result: HTTP/1.1 200 OK; body title present.
+
+Boundary
+- HUMAN_TEST=BLOCKED. These prompts and no-network tests do not prove a connected WebRTC tutor response.

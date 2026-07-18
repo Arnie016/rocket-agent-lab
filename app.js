@@ -5,6 +5,7 @@ import {
   buildRealtimeTutorTurnEvents,
 } from "./realtime-context.mjs";
 import { releaseRealtimeResources } from "./realtime-session.mjs";
+import { evaluateEngineOutLesson, engineLessonTutorEvent } from "./causal-engine-lesson.mjs";
 
 const builderConfig = {
   stages: 2,
@@ -3303,6 +3304,7 @@ let state = {
   labelDensity: "focus",
   scale: true,
   baseline: null,
+  engineLessonProof: null,
   engineeringSignature: "",
   workspaceInfoDetail: "",
   agentBusy: false,
@@ -3504,6 +3506,15 @@ const els = {
   deltaTwr: document.querySelector("#deltaTwr"),
   deltaQ: document.querySelector("#deltaQ"),
   deltaRisk: document.querySelector("#deltaRisk"),
+  causalEngineProof: document.querySelector("#causalEngineProof"),
+  causalProofVerdict: document.querySelector("#causalProofVerdict"),
+  causalProofReason: document.querySelector("#causalProofReason"),
+  causalProofControl: document.querySelector("#causalProofControl"),
+  causalProofTwr: document.querySelector("#causalProofTwr"),
+  causalProofDv: document.querySelector("#causalProofDv"),
+  causalProofRisk: document.querySelector("#causalProofRisk"),
+  runEngineLesson: document.querySelector("#runEngineLesson"),
+  askEngineLesson: document.querySelector("#askEngineLesson"),
   controlCues: document.querySelector("#controlCues"),
   warningStack: document.querySelector("#warningStack"),
   payloadBar: document.querySelector("#payloadBar"),
@@ -4689,8 +4700,10 @@ function updateVoiceUi() {
 
 function closeRealtimeCompanion({ quiet = false } = {}) {
   state.voiceRealtimeDc?.close?.();
-  state.voiceRealtimePc?.close?.();
-  state.voiceRealtimeStream?.getTracks?.().forEach((track) => track.stop());
+  releaseRealtimeResources({
+    peerConnection: state.voiceRealtimePc,
+    stream: state.voiceRealtimeStream,
+  });
   if (state.voiceRealtimeAudio) {
     state.voiceRealtimeAudio.pause();
     state.voiceRealtimeAudio.srcObject = null;
@@ -4843,6 +4856,12 @@ async function startRealtimeCompanion() {
     };
     dc.onmessage = (event) => handleRealtimeMessage(event.data);
     dc.onopen = requestOpeningTutorTurn;
+    dc.onclose = () => {
+      if (state.voiceRealtimeDc !== dc || !state.voiceRealtimeConnected) return;
+      closeRealtimeCompanion({ quiet: true });
+      els.agentStatus.textContent = "Realtime needs attention";
+      guide("Realtime voice disconnected. You can reconnect from the Voice companion row.", "Agent");
+    };
     pc.onconnectionstatechange = () => {
       if (["failed", "disconnected"].includes(pc.connectionState) && (state.voiceRealtimeConnected || state.voiceRealtimeConnecting)) {
         closeRealtimeCompanion({ quiet: true });
@@ -7874,6 +7893,59 @@ function renderDeltaStrip() {
   });
 }
 
+function renderCausalEngineProof() {
+  const proof = state.engineLessonProof;
+  if (!proof) {
+    els.causalEngineProof.dataset.state = "ready";
+    els.causalProofVerdict.textContent = "READY TO TEST";
+    els.causalProofReason.textContent = "Hold every variable constant, reduce engine health once, and prove what changed before asking the tutor.";
+    els.causalProofControl.textContent = "100% → 67%";
+    els.causalProofTwr.textContent = "—";
+    els.causalProofDv.textContent = "—";
+    els.causalProofRisk.textContent = "—";
+    els.askEngineLesson.disabled = true;
+    return;
+  }
+  els.causalEngineProof.dataset.state = proof.crossesLiftoffBoundary ? "critical" : "pass";
+  els.causalProofVerdict.textContent = proof.verdict;
+  els.causalProofReason.textContent = proof.controllingReason;
+  els.causalProofControl.textContent = `${proof.control.before}% → ${proof.control.after}%`;
+  els.causalProofTwr.textContent = `${proof.before.twr.toFixed(2)} → ${proof.after.twr.toFixed(2)}`;
+  els.causalProofDv.textContent = signedNumber(proof.delta.deltaV, 0, " m/s");
+  els.causalProofRisk.textContent = signedNumber(proof.delta.risk * 100, 0, " points");
+  els.askEngineLesson.disabled = false;
+}
+
+function runEngineOutLesson() {
+  restoreSafeDefault();
+  const before = metricsSnapshot();
+  const engineHealthBefore = state.engineHealth;
+  state.engineHealth = 67;
+  state.controlFocus = "engine";
+  state.controlPulse = 120;
+  const after = metricsSnapshot();
+  state.engineLessonProof = evaluateEngineOutLesson({
+    rocket: currentRocket().name,
+    before,
+    after,
+    engineHealthBefore,
+    engineHealthAfter: state.engineHealth,
+  });
+  syncExperimentControls();
+  renderUI();
+  guide(`${state.engineLessonProof.verdict}: ${state.engineLessonProof.controllingReason}`, "Causal lab");
+}
+
+function askEngineOutTutor() {
+  if (!state.engineLessonProof) return;
+  const event = engineLessonTutorEvent(state.engineLessonProof);
+  if (state.voiceRealtimeConnected && requestRealtimeResponse(event, "causal-engine-lesson")) {
+    els.agentStatus.textContent = "Realtime companion thinking...";
+    return;
+  }
+  sendAgentPrompt(event);
+}
+
 function shouldShowPartLabel(part, index, parts) {
   if (state.labelDensity === "all") return true;
   const selectedIndex = Math.max(0, parts.findIndex((item) => item.id === state.selectedPartId));
@@ -8274,6 +8346,7 @@ function renderUI() {
   renderChallenge();
   renderLabCoach();
   renderDeltaStrip();
+  renderCausalEngineProof();
   renderTrajectoryPlanner();
   renderSessionLoop();
   renderVectorPlan();
@@ -9507,6 +9580,8 @@ function bindEvents() {
   });
   els.voiceTalk?.addEventListener("click", startVoiceInput);
   els.voiceRealtime?.addEventListener("click", startRealtimeCompanion);
+  els.runEngineLesson?.addEventListener("click", runEngineOutLesson);
+  els.askEngineLesson?.addEventListener("click", askEngineOutTutor);
   els.companionLoopRun?.addEventListener("click", runCompanionLoop);
   els.voiceAuto?.addEventListener("click", () => {
     if (!state.voiceEnabled) return;
