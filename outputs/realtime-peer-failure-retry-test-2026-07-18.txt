@@ -1,0 +1,26 @@
+Rocket Agent Lab — Realtime peer-failure retry proof
+Run: 2026-07-18T12:08:27+0800
+
+Change verified
+- app.js now treats WebRTC peer connection states `failed` and `disconnected` as terminal while the Realtime companion is either live or still connecting.
+- That path calls `closeRealtimeCompanion({ quiet: true })` and releases the captured peer connection plus microphone stream, so a failed negotiation cannot leave a stale resource or falsely live control.
+- Intentional local close is not reported as a network disconnect.
+
+No-network checks
+$ node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+pass 3, fail 0
+
+$ node --check app.js
+$ node --check realtime-context.mjs
+$ node --check realtime-session.mjs
+$ node --check server.mjs
+all passed
+
+Local smoke
+$ node server.mjs
+$ curl http://127.0.0.1:5186/
+HTTP status: 200
+Marker: Rocket Agent Lab found
+
+Boundary
+No API request, microphone authorization, or WebRTC session was attempted. HUMAN_TEST remains BLOCKED.

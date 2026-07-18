@@ -1,0 +1,4 @@
+Change: Added DEVPOST_VOICE_NOTES.md as a founder-owned capture sheet.
+Check: Required founder-voice prompts, causal-voice rationale, failed-attempt/correction prompts, GPT-5.6 evidence placeholder, and HUMAN_EDIT_REQUIRED boundary are present.
+Result: PASS — the file contains no fabricated founder narrative and keeps all eventual prose human-owned.
+Closest gate unchanged: HUMAN_TEST=BLOCKED pending one authorized connected microphone/WebRTC session with opening and changed-state causal evidence.

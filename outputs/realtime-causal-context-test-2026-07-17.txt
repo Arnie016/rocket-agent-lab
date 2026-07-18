@@ -1,0 +1,24 @@
+Rocket Agent Lab — Realtime causal context proof
+Run: 2026-07-17T20:46:10+08:00
+
+Change
+- Added pure realtime-context.mjs builders for the causal context, opening tutor turn, and subsequent tutor turn.
+- app.js now builds the WebRTC opening context and data-channel follow-up contexts from the same current rocket, selected part, lesson, simulation, and voice-style snapshot.
+
+No-network test
+$ node --test test/realtime-context.test.mjs
+PASS: opening and subsequent turns retain rocket, part, lesson, simulation, and voice style.
+
+Syntax checks
+$ node --check app.js
+$ node --check server.mjs
+PASS
+
+Local HTTP smoke
+$ PORT=5197 node server.mjs
+$ curl http://127.0.0.1:5197/
+HTTP_STATUS=200
+INDEX_BYTES=55257
+
+Human test state
+- Not run. An authorized microphone/WebRTC session is still required to prove live Realtime behavior.

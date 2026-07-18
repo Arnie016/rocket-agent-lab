@@ -1,0 +1,21 @@
+Rocket Agent Lab — Realtime causal state-change regression proof
+Run: 2026-07-17T22:46:04+08:00
+
+Change
+- The no-network Realtime context test now uses a later payload-mass-change snapshot rather than reusing the opening simulation snapshot.
+- The later context must contain: phase Max-Q, T/W 1.31, altitude 16.8 km, and Max-Q 41 kPa.
+- The later context must not retain the opening T/W 1.42, altitude 12.4 km, or Max-Q 34 kPa values.
+
+Verified commands
+- node --test test/realtime-context.test.mjs
+  PASS: 1 test, 0 failures
+- node --check app.js
+  PASS
+- node --check server.mjs
+  PASS
+- temporary local server + curl http://127.0.0.1:5186/
+  PASS: HTTP 200 /
+
+Boundary
+- No API call, microphone permission, or WebRTC session was attempted.
+- An authorized human microphone/WebRTC session remains the next proof gate.

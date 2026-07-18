@@ -1,0 +1,11 @@
+Rocket Agent Lab Realtime grounding smoke proof
+Run: 2026-07-17T11:21:45+08:00
+
+Verified locally:
+- node --check passed for server.mjs, app.js, and rocket-three-scene.js.
+- A temporary server on http://127.0.0.1:5187 returned HTTP 200 for /.
+- server.mjs now passes voiceStyle and voiceContext into Realtime session instructions.
+
+Realtime boundary:
+- No authorized microphone/WebRTC session was tested.
+- A malformed synthetic SDP was rejected with HTTP 400; it is not evidence that Realtime voice works.

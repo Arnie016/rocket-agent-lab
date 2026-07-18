@@ -1,0 +1,63 @@
+\documentclass[11pt]{article}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\textwidth}{6.9in}
+\setlength{\oddsidemargin}{-0.2in}
+\setlength{\topmargin}{-0.6in}
+\setlength{\textheight}{9.7in}
+
+\begin{document}
+
+{\Large Rocket Agent Lab: classroom flight model}
+
+\vspace{0.35in}
+
+\[
+F_{\rm net}=T-W-D=T-mg-\frac{1}{2}\rho v^2 C_D A
+\]
+
+\[
+a=\frac{F_{\rm net}}{m}
+\]
+
+\[
+m_0=m_{\rm dry}+m_{\rm propellant}+m_{\rm payload}
+\qquad
+m_f=m_{\rm dry}+m_{\rm payload}
+\]
+
+\[
+\Delta v=I_{sp}g_0\ln\left(\frac{m_0}{m_f}\right)
+\]
+
+\[
+\Delta v_{\rm staged}\approx G_{\rm stage}I_{sp}g_0
+\ln\left(\frac{m_0}{m_f}\right)
+\]
+
+\[
+\frac{T}{W}=\frac{T}{m_0g_0}>1
+\]
+
+\[
+q=\frac{1}{2}\rho v^2
+\qquad
+\rho(h)=\rho_0e^{-h/H}
+\]
+
+\[
+{\rm payload\ margin}=m_{\rm payload,max}-m_{\rm payload}
+\]
+
+\[
+{\rm mission\ margin}=\Delta v_{\rm staged}-\Delta v_{\rm required}
+\]
+
+\vspace{0.25in}
+
+The web app uses these equations as a transparent teaching model. It is not a
+full launch simulator: it is a hands-on layer for seeing how payload, fuel
+load, drag area, thrust-to-weight ratio, dynamic pressure, and mass ratio move
+together.
+
+\end{document}

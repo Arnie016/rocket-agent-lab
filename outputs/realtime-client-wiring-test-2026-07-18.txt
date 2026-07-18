@@ -1,0 +1,18 @@
+Realtime client wiring proof — 2026-07-18
+
+Change under test:
+- test/realtime-client-wiring.test.mjs reads app.js without starting a network session.
+- It proves the SDP request uses buildRealtimeOpeningTutorContext(realtimeCausalSnapshot("realtime")).
+- It proves subsequent tutor events use buildRealtimeTutorTurnEvents(realtimeCausalSnapshot(mode), ...), preventing a stale opening snapshot.
+- It proves the opening requestRealtimeResponse call waits for the Realtime data-channel onopen event.
+
+Verified command:
+node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs && node --check app.js && node --check realtime-context.mjs && node --check realtime-session.mjs && node --check server.mjs
+
+Result:
+- 3 tests passed, 0 failed.
+- Syntax checks passed.
+- Local HTTP smoke: GET http://127.0.0.1:5186/ returned HTTP/1.1 200 OK.
+
+Boundary:
+- HUMAN_TEST remains BLOCKED. This no-network wiring proof does not establish an authorized microphone/WebRTC response.

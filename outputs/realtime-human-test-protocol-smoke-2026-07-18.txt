@@ -1,0 +1,20 @@
+Rocket Agent Lab — authorized Realtime human-test protocol smoke
+Date: 2026-07-18
+
+Change verified:
+- README links to outputs/realtime-human-test-protocol-2026-07-18.md.
+- The protocol requires a real WebRTC connection, an opening selected-scene observation, and a subsequent changed-simulation observation.
+- The protocol explicitly excludes API keys, raw SDP, and browser credential dialogs from evidence.
+
+Commands passed:
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs
+  Result: 2 passed, 0 failed.
+- node --check app.js
+  Result: passed.
+- node --check server.mjs
+  Result: passed.
+- bounded-retry local HTTP GET http://127.0.0.1:5186/
+  Result: 200 body contained Rocket Agent Lab.
+
+Human gate:
+- HUMAN_TEST=BLOCKED. No authorized microphone/WebRTC session was started by this automation.

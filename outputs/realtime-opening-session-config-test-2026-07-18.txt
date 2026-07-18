@@ -1,0 +1,19 @@
+Rocket Agent Lab — Realtime opening session-config proof
+Date: 2026-07-18
+
+Change
+- Extracted buildRealtimeSessionConfig() into realtime-session.mjs.
+- Both local server.mjs and Vercel api/realtime-call.js now use the same pure session configuration builder.
+
+No-network assertion
+- test/realtime-session.test.mjs builds an opening session configuration with mission-control, Saturn V, F-1-class engine, Max-Q and structural load, T/W 1.42, altitude 12.4 km, and Max-Q 34 kPa.
+- The test asserts every selected-state fact remains in the exact instructions supplied to the Realtime session, along with the configured model, transcription model, and voice.
+
+Verification
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs: 2 passed, 0 failed.
+- node --check app.js; node --check server.mjs; node --check realtime-session.mjs; node --check api/realtime-call.js: passed.
+- Temporary local server GET /: HTTP 200; Rocket Agent Lab marker present.
+
+Boundary
+- No OpenAI request, microphone permission, WebRTC session, deployment, or external mutation was performed.
+- HUMAN_TEST remains BLOCKED until one authorized connected session captures both opening and changed-state tutor responses.

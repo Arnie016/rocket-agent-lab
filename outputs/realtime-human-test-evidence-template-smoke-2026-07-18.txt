@@ -1,0 +1,8 @@
+Realtime human-test evidence record improvement — 2026-07-18
+
+Change: added outputs/realtime-human-test-evidence-template.md and linked it from the authorized protocol and submission checklist.
+Safety check: the template begins HUMAN_TEST=BLOCKED and states that static controls, malformed SDP, and no-network tests are not passes.
+Narrow tests: node --test test/realtime-context.test.mjs test/realtime-session.test.mjs — 2 passed, 0 failed.
+Syntax: node --check app.js; node --check server.mjs — passed.
+Local HTTP smoke: temporary node server.mjs; GET http://127.0.0.1:5186/ — 200, body contains Rocket Agent Lab.
+Result: local proof only; no microphone, WebRTC, external API call, or human test was performed.

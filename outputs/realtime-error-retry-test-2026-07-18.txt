@@ -1,0 +1,16 @@
+Realtime error retry proof — 2026-07-18
+
+Change under test:
+- When a connected Realtime data-channel event reports an error, `handleRealtimeMessage()` now calls `closeRealtimeCompanion({ quiet: true })` before reporting the error.
+- This releases the local peer connection, microphone tracks, data channel, and audio element so the control does not remain falsely live and the learner can retry.
+
+Verified command:
+node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs && node --check app.js && node --check realtime-context.mjs && node --check realtime-session.mjs && node --check server.mjs
+
+Result:
+- 3 tests passed, 0 failed.
+- Syntax checks passed.
+- Local HTTP smoke: GET http://127.0.0.1:5186/ returned 200 and contained `Rocket Agent Lab`.
+
+Boundary:
+- HUMAN_TEST remains BLOCKED. This proves local error/retry behavior only; it does not prove an authorized microphone/WebRTC response.

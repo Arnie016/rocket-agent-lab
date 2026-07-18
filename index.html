@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rocket Agent Lab</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080c13'/%3E%3Cpath d='M32 8c7 8 10 17 10 31H22C22 25 25 16 32 8Z' fill='%23e8edf4'/%3E%3Cpath d='M22 39h20l-5 13H27l-5-13Z' fill='%23f6b14a'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button class="icon-button menu-toggle" id="menuToggle" aria-label="Toggle rocket catalog">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div>
+            <h1>Rocket Agent Lab</h1>
+            <p>Interactive 3D rocket lessons with an AI tutor</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-button" id="resetView">Reset view</button>
+          <button class="ghost-button" id="blueprintWorkspace">Blueprint</button>
+          <button class="primary-button" id="agentPulse">Ask agent</button>
+        </div>
+      </header>
+
+      <aside class="catalog-panel" id="catalogPanel" aria-label="Rocket catalog">
+        <div class="panel-header">
+          <h2>Launch hangar</h2>
+          <span id="catalogCount">9 live models</span>
+        </div>
+        <div class="catalog-tabs" aria-label="Engineering catalog">
+          <button data-catalog-mode="rockets" class="active" type="button">Rockets</button>
+          <button data-catalog-mode="engines" type="button">Engines</button>
+          <button data-catalog-mode="materials" type="button">Materials</button>
+        </div>
+        <div class="catalog-filters" id="catalogFilters" aria-label="Rocket mission filters">
+          <button data-catalog-filter="all" class="active" type="button">All</button>
+          <button data-catalog-filter="reusable" type="button">Reusable</button>
+          <button data-catalog-filter="crew" type="button">Crew</button>
+          <button data-catalog-filter="heavy" type="button">Heavy</button>
+          <button data-catalog-filter="small" type="button">Small</button>
+          <button data-catalog-filter="historic" type="button">Historic</button>
+          <button data-catalog-filter="development" type="button">Dev</button>
+        </div>
+        <div class="mission-ring" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="rocket-list" id="rocketList"></div>
+        <div class="scale-card">
+          <div>
+            <strong>Scale mode</strong>
+            <span>Compare height, thrust, and payload class.</span>
+          </div>
+          <label class="switch">
+            <input id="scaleToggle" type="checkbox" checked />
+            <span></span>
+          </label>
+        </div>
+      </aside>
+
+      <main class="viewport-zone">
+        <canvas id="rocketCanvas" aria-label="Interactive 3D rocket viewport"></canvas>
+        <div class="scene-overlay top-left">
+          <span id="missionLabel">Saturn V · Apollo lunar stack</span>
+          <strong id="partLabel">S-IC first stage</strong>
+        </div>
+        <div class="scene-overlay top-right">
+          <span>Lesson</span>
+          <strong id="lessonLabel">1 / 6 · Anatomy</strong>
+        </div>
+        <div class="viewport-toolbar" role="toolbar" aria-label="3D viewport controls">
+          <button id="explodeToggle" class="tool-button active" title="Split assembly view">Split</button>
+          <button id="cutawayToggle" class="tool-button" title="Show internal tanks and load path">Cutaway</button>
+          <button id="labelToggle" class="tool-button active" title="Show part, fuel, payload, and equation labels">Labels</button>
+          <button id="labelDensityToggle" class="tool-button" title="Switch between focused labels and all labels">Focus</button>
+          <button id="simToggle" class="tool-button active" title="Run ascent simulation">Sim</button>
+          <button id="cameraModeToggle" class="tool-button" title="Switch visible, infrared, and weather camera modes">Camera</button>
+          <button id="quizButton" class="tool-button" title="Ask a lesson question">Quiz</button>
+        </div>
+        <div class="inspection-rail" id="inspectionRail" aria-label="Inspection shortcuts">
+          <button data-inspect="engines"><span>Engines</span><strong>thrust path</strong></button>
+          <button data-inspect="tanks"><span>Tanks</span><strong>mass ratio</strong></button>
+          <button data-inspect="payload"><span>Payload</span><strong>balance</strong></button>
+          <button data-inspect="thermal"><span>Thermal</span><strong>max-q</strong></button>
+        </div>
+        <div class="part-labels active" id="partLabels" aria-label="Rocket part labels"></div>
+          <div class="view-hint" id="viewHint">
+            <strong>Drag view</strong>
+          <span>Drag rotates and tilts. Shift-drag pans along the stack. Scroll zooms.</span>
+        </div>
+        <div class="scale-strip" id="scaleStrip">
+          <div class="scale-person" aria-hidden="true"></div>
+          <div>
+            <span>Human scale</span>
+            <strong id="scaleReadout">Saturn V is about 60x taller than a person.</strong>
+          </div>
+        </div>
+        <div class="sim-strip" id="simStrip">
+          <div><span>t+</span><strong id="simTime">0 s</strong></div>
+          <div><span>v</span><strong id="simVelocity">0 m/s</strong></div>
+          <div><span>h</span><strong id="simAltitude">0 km</strong></div>
+          <div><span>KE</span><strong id="simEnergy">0 MJ</strong></div>
+          <div><span>m</span><strong id="simMass">100%</strong></div>
+        </div>
+        <div class="trajectory-ribbon" id="trajectoryRibbon" aria-label="Live launch trajectory">
+          <span>Trajectory</span>
+          <strong id="trajectoryRibbonTitle">Pad to orbit</strong>
+          <i><b id="trajectoryRibbonDot"></b></i>
+          <em id="trajectoryRibbonCopy">Launch to see pitch, coast, and insertion.</em>
+        </div>
+        <div class="mission-copilot-hud" id="missionCopilotHud" data-state="nominal" aria-live="polite">
+          <span>Mission copilot</span>
+          <strong>Move a control to see the physics react.</strong>
+          <em>Voice auto can speak these callouts in real time.</em>
+        </div>
+        <section class="viewport-blueprint" id="viewportBlueprint" aria-label="Full blueprint workspace">
+          <div class="blueprint-workbench-head">
+            <div>
+              <span>Engineering workbench</span>
+              <strong id="viewportBlueprintTitle">Build-a-Rocket blueprint</strong>
+            </div>
+            <div class="blueprint-toolbar compact" role="group" aria-label="Blueprint overlay">
+              <button data-blueprint-layer="structure" class="active" type="button">Frame</button>
+              <button data-blueprint-layer="forces" type="button">Forces</button>
+              <button data-blueprint-layer="fuel" type="button">Fuel</button>
+              <button data-blueprint-layer="thermal" type="button">Heat</button>
+              <button data-blueprint-layer="orbit" type="button">Orbit</button>
+            </div>
+          </div>
+          <div class="viewport-blueprint-grid">
+            <div class="blueprint-canvas viewport-canvas" id="viewportBlueprintCanvas" data-layer="structure">
+              <div class="blueprint-grid" aria-hidden="true"></div>
+              <canvas class="blueprint-sketch-layer" id="blueprintSketchCanvas" aria-label="Blueprint sketch layer"></canvas>
+              <div class="blueprint-part-layer" id="blueprintPartLayer" aria-label="Placed blueprint parts"></div>
+              <div class="blueprint-draft-tools" aria-label="Blueprint drawing tools">
+                <button data-draft-tool="draw" class="active" type="button">Draw</button>
+                <button data-draft-tool="erase" type="button">Erase</button>
+                <button data-draft-tool="clear" type="button">Clear</button>
+              </div>
+              <div class="blueprint-view-tools" aria-label="Blueprint view controls">
+                <button data-blueprint-view="front" class="active" type="button">Front</button>
+                <button data-blueprint-view="side" type="button">Side</button>
+                <button data-blueprint-view="top" type="button">Top</button>
+                <button data-blueprint-view="bottom" type="button">Bottom</button>
+              </div>
+              <div class="blueprint-layer-readout">
+                <span id="blueprintLayerKicker">Frame overlay</span>
+                <strong id="blueprintLayerTitle">Structure + dimensions</strong>
+                <em id="blueprintLayerEquation">m0 = dry + propellant + payload</em>
+              </div>
+              <div class="blueprint-dimension height"><span id="viewportBlueprintHeight">79 m</span></div>
+              <div class="blueprint-dimension width"><span id="viewportBlueprintWidth">4.2 m</span></div>
+              <div class="blueprint-rocket" id="viewportBlueprintRocket" aria-hidden="true"></div>
+              <div class="blueprint-section-labels" id="viewportBlueprintLabels"></div>
+              <div class="blueprint-stress-trace" aria-hidden="true"></div>
+              <div class="blueprint-thermal-plume" aria-hidden="true"></div>
+              <div class="blueprint-force up"><span>thrust</span></div>
+              <div class="blueprint-force down"><span>weight</span></div>
+              <div class="blueprint-orbit-arc"><span>target path</span></div>
+            </div>
+            <div class="viewport-blueprint-desk">
+              <div class="blueprint-design-brief" id="viewportBlueprintBrief" aria-label="Blueprint design brief">
+                <div class="brief-head">
+                  <span>Design brief</span>
+                  <strong>Pick a target, fix one blocker, then launch.</strong>
+                </div>
+                <div class="brief-proof">
+                  <button type="button"><span>Goal</span><strong>Low Earth orbit</strong></button>
+                  <button type="button"><span>Blocker</span><strong>Waiting for data</strong></button>
+                  <button type="button"><span>Proof</span><strong>T / W &gt; 1</strong></button>
+                </div>
+                <div class="brief-actions">
+                  <button data-brief-action="apply" type="button">Apply next move</button>
+                  <button data-brief-action="ask" type="button">Ask why</button>
+                  <button data-brief-action="launch" type="button">Launch</button>
+                </div>
+              </div>
+              <div class="blueprint-metrics" id="viewportBlueprintMetrics"></div>
+              <div class="blueprint-controls compact" aria-label="Fast blueprint controls">
+                <label><span>Engines</span><input data-blueprint-control="engineCount" type="range" min="1" max="33" value="12" step="1" /></label>
+                <label><span>Width</span><input data-blueprint-control="diameterM" type="range" min="1.2" max="9" value="4.2" step="0.2" /></label>
+                <label><span>Engine</span><select data-blueprint-control="engineModel"><option value="merlin">Merlin</option><option value="raptor">Raptor</option><option value="be4">BE-4</option><option value="rd180">RD-180</option><option value="rs25">RS-25</option><option value="vinci">Vinci</option><option value="archimedes">Archimedes</option><option value="aeonr">Aeon R</option><option value="f1">F-1</option><option value="rutherford">Small</option></select></label>
+                <label><span>Fuel</span><select data-blueprint-control="upperStage"><option value="kerolox">RP-1</option><option value="methalox">CH4</option><option value="cryo">LH2</option></select></label>
+              </div>
+              <div class="blueprint-checklist" id="viewportBlueprintChecklist"></div>
+              <div class="blueprint-readiness" id="viewportBlueprintReadiness" aria-label="Blueprint assembly readiness"></div>
+              <div class="blueprint-manifest" id="viewportBlueprintManifest" aria-label="Blueprint launch manifest"></div>
+              <div class="blueprint-fault-tree" id="viewportBlueprintFaultTree" aria-label="Blueprint fault tree"></div>
+              <div class="blueprint-diagnosis" id="viewportBlueprintDiagnosis"></div>
+              <div class="blueprint-stress-lab" id="viewportBlueprintStress" aria-label="Blueprint structural stress lab"></div>
+              <div class="blueprint-actions">
+                <button id="viewportBlueprintAsk" class="ghost-button" type="button">Ask tutor</button>
+                <button id="viewportBlueprintLaunch" class="primary-button" type="button">Launch this</button>
+              </div>
+            </div>
+          </div>
+          <div class="blueprint-inventory" aria-label="Drag rocket parts into the blueprint">
+            <div class="inventory-title">
+              <span>Assembly inventory</span>
+              <strong id="blueprintInventoryStatus">Drag a part into the workbench, or tap one.</strong>
+            </div>
+            <div class="inventory-rail">
+              <button data-blueprint-part="sketch-stage" draggable="true" type="button"><i>▯</i><span>Tube</span></button>
+              <button data-blueprint-part="sketch-nose" draggable="true" type="button"><i>△</i><span>Nose</span></button>
+              <button data-blueprint-part="sketch-fin" draggable="true" type="button"><i>◢</i><span>Fin</span></button>
+              <button data-blueprint-part="stage" draggable="true" type="button"><i>II</i><span>Stage</span></button>
+              <button data-blueprint-part="booster" draggable="true" type="button"><i>||</i><span>Boosters</span></button>
+              <button data-blueprint-part="engine" draggable="true" type="button"><i>9</i><span>Engines</span></button>
+              <button data-blueprint-part="raptor" draggable="true" type="button"><i>R</i><span>Raptor</span></button>
+              <button data-blueprint-part="fuel" draggable="true" type="button"><i>CH4</i><span>Fuel</span></button>
+              <button data-blueprint-part="cryo" draggable="true" type="button"><i>H2</i><span>Cryo</span></button>
+              <button data-blueprint-part="skin" draggable="true" type="button"><i>Fe</i><span>Steel</span></button>
+              <button data-blueprint-part="shield" draggable="true" type="button"><i>TPS</i><span>Shield</span></button>
+              <button data-blueprint-part="slim" draggable="true" type="button"><i>&lt;&gt;</i><span>Slim</span></button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="lesson-panel" aria-label="Lesson and agent panel" data-mode="flight">
+        <nav class="panel-mode-tabs" aria-label="Lab modes">
+          <button data-panel-mode="flight" class="active" type="button">Flight</button>
+          <button data-panel-mode="learn" type="button">Learn</button>
+          <button data-panel-mode="trajectory" type="button">Trajectory</button>
+          <button data-panel-mode="agent" type="button">Agent</button>
+        </nav>
+
+        <section class="experiment-card" id="flightLab">
+          <div class="panel-header">
+            <h2>Flight lab</h2>
+            <span id="payloadStatus">Nominal</span>
+          </div>
+          <div class="lab-workspace-tabs" role="group" aria-label="Flight lab workspace">
+            <button data-flight-workspace="build" type="button">Build</button>
+            <button data-flight-workspace="engines" type="button">Engines</button>
+            <button data-flight-workspace="materials" type="button">Materials</button>
+            <button data-flight-workspace="flight" class="active" type="button">Test</button>
+            <button data-flight-workspace="failure" type="button">Review</button>
+          </div>
+          <div class="workspace-guide" id="workspaceGuide" data-state="nominal">
+            <div>
+              <span id="workspaceKicker">Current bench</span>
+              <strong id="workspaceTitle">Test one change</strong>
+              <p id="workspaceCopy">Move one control, predict the graph, then launch.</p>
+            </div>
+            <code id="workspaceEquation">Δv = Isp · g0 · ln(m0 / mf)</code>
+            <button id="workspaceAction" class="ghost-button" type="button">Run step</button>
+            <p id="workspaceDetail">Click any card below for a short explanation.</p>
+          </div>
+          <div class="scenario-tabs" role="group" aria-label="Flight experiment">
+            <button class="scenario-tab active" data-mission="orbit">Orbit</button>
+            <button class="scenario-tab" data-mission="escape">Escape</button>
+            <button class="scenario-tab" data-mission="heavy">Heavy</button>
+            <button class="scenario-tab" data-mission="maxq">Max-Q</button>
+          </div>
+          <div class="builder-card" id="builderLab">
+            <div class="builder-head">
+              <div>
+                <span>Build mode</span>
+                <strong>Change the rocket shape</strong>
+              </div>
+              <button id="loadBuilder" class="ghost-button" type="button">Use custom rocket</button>
+            </div>
+            <div class="builder-controls" aria-label="Custom rocket architecture controls">
+              <label>
+                <span>Stages</span>
+                <select id="builderStages">
+                  <option value="1">1 stage</option>
+                  <option value="2" selected>2 stages</option>
+                  <option value="3">3 stages</option>
+                </select>
+              </label>
+              <label>
+                <span>Boosters</span>
+                <select id="builderBoosters">
+                  <option value="0" selected>None</option>
+                  <option value="1">2 side</option>
+                  <option value="2">4 side</option>
+                </select>
+              </label>
+              <label>
+                <span>Main engines</span>
+                <input id="builderEngines" type="range" min="1" max="33" value="12" step="1" />
+                <output id="builderEngineValue">9</output>
+              </label>
+              <label>
+                <span>Engine family</span>
+                <select id="builderEngineModel">
+                  <option value="merlin" selected>Merlin</option>
+                  <option value="raptor">Raptor</option>
+                  <option value="be4">BE-4</option>
+                  <option value="rd180">RD-180</option>
+                  <option value="rs25">RS-25</option>
+                  <option value="vinci">Vinci upper</option>
+                  <option value="archimedes">Archimedes</option>
+                  <option value="aeonr">Aeon R</option>
+                  <option value="f1">F-1</option>
+                  <option value="rutherford">Small electric</option>
+                </select>
+              </label>
+              <label>
+                <span>Tank width</span>
+                <input id="builderDiameter" type="range" min="1.2" max="9" value="4.2" step="0.2" />
+                <output id="builderDiameterValue">4.2 m</output>
+              </label>
+              <label>
+                <span>Upper fuel</span>
+                <select id="builderUpper">
+                  <option value="kerolox" selected>RP-1</option>
+                  <option value="methalox">CH4</option>
+                  <option value="cryo">LH2</option>
+                </select>
+              </label>
+              <label>
+                <span>Skin material</span>
+                <select id="builderSkinMaterial">
+                  <option value="aluminum-lithium" selected>Al-Li</option>
+                  <option value="stainless-steel">Steel</option>
+                  <option value="carbon-composite">Carbon</option>
+                  <option value="titanium">Titanium</option>
+                </select>
+              </label>
+              <label>
+                <span>Tank material</span>
+                <select id="builderTankMaterial">
+                  <option value="aluminum-lithium" selected>Al-Li</option>
+                  <option value="stainless-steel">Steel</option>
+                  <option value="carbon-composite">Carbon</option>
+                  <option value="titanium">Titanium</option>
+                </select>
+              </label>
+              <label>
+                <span>Heat shield</span>
+                <select id="builderHeatShieldMaterial">
+                  <option value="ablative" selected>Ablative</option>
+                  <option value="ceramic">Ceramic</option>
+                  <option value="thin-silica">Thin silica</option>
+                  <option value="metallic">Metallic</option>
+                </select>
+              </label>
+              <label>
+                <span>Reuse</span>
+                <select id="builderReuse">
+                  <option value="expendable" selected>Spend it</option>
+                  <option value="reusable">Reuse it</option>
+                </select>
+              </label>
+            </div>
+            <div class="builder-readout" id="builderReadout"></div>
+            <div class="builder-preset-row" aria-label="Builder presets">
+              <button data-builder-preset="tiny" type="button">Tiny</button>
+              <button data-builder-preset="heavy" type="button">Heavy</button>
+              <button data-builder-preset="moon" type="button">Moon</button>
+              <button data-builder-preset="chaos" type="button">Break it</button>
+            </div>
+            <div class="builder-diagnosis" id="builderDiagnosis">
+              <div>
+                <span>Failure classroom</span>
+                <strong id="builderDiagnosisTitle">Architecture diagnosis</strong>
+                <p id="builderDiagnosisCopy">Tune the stack and this panel explains the first thing likely to fail.</p>
+              </div>
+              <ul id="builderRepairList"></ul>
+              <div class="builder-action-row">
+                <button id="stressBuilder" class="ghost-button" type="button">Stress test</button>
+                <button id="repairBuilder" class="primary-button" type="button">Repair next issue</button>
+              </div>
+            </div>
+          </div>
+          <div class="engineering-card" id="engineLab">
+            <div class="subpanel-head">
+              <span>Engine lab</span>
+              <strong id="engineLabTitle">Engine family and count</strong>
+            </div>
+            <div class="mini-control-grid">
+              <label>
+                <span>Engine family</span>
+                <select id="engineModelLab">
+                  <option value="merlin">Merlin</option>
+                  <option value="raptor">Raptor</option>
+                  <option value="be4">BE-4</option>
+                  <option value="rd180">RD-180</option>
+                  <option value="rs25">RS-25</option>
+                  <option value="vinci">Vinci upper</option>
+                  <option value="archimedes">Archimedes</option>
+                  <option value="aeonr">Aeon R</option>
+                  <option value="f1">F-1</option>
+                  <option value="rutherford">Small electric</option>
+                </select>
+              </label>
+              <label>
+                <span>Engine count</span>
+                <input id="engineCountLab" type="range" min="1" max="33" value="12" step="1" />
+                <output id="engineCountLabValue">12</output>
+              </label>
+              <label>
+                <span>Upper fuel</span>
+                <select id="upperFuelLab">
+                  <option value="kerolox">RP-1</option>
+                  <option value="methalox">CH4</option>
+                  <option value="cryo">LH2</option>
+                </select>
+              </label>
+            </div>
+            <div class="engineering-grid" id="engineGrid"></div>
+            <details open>
+              <summary>What changes when I swap engines?</summary>
+              <p id="engineLabCopy">Engine choice changes thrust, specific impulse, mass, reliability, and complexity. Count mainly changes T/W.</p>
+            </details>
+          </div>
+          <div class="engineering-card" id="materialsLab">
+            <div class="subpanel-head">
+              <span>Materials lab</span>
+              <strong id="materialsLabTitle">Stress, stiffness, heat</strong>
+            </div>
+            <div class="mini-control-grid">
+              <label>
+                <span>Skin</span>
+                <select id="skinMaterialLab">
+                  <option value="aluminum-lithium">Al-Li</option>
+                  <option value="stainless-steel">Steel</option>
+                  <option value="carbon-composite">Carbon</option>
+                  <option value="titanium">Titanium</option>
+                </select>
+              </label>
+              <label>
+                <span>Tank</span>
+                <select id="tankMaterialLab">
+                  <option value="aluminum-lithium">Al-Li</option>
+                  <option value="stainless-steel">Steel</option>
+                  <option value="carbon-composite">Carbon</option>
+                  <option value="titanium">Titanium</option>
+                </select>
+              </label>
+              <label>
+                <span>Heat shield</span>
+                <select id="heatShieldLab">
+                  <option value="ablative">Ablative</option>
+                  <option value="ceramic">Ceramic</option>
+                  <option value="thin-silica">Thin silica</option>
+                  <option value="metallic">Metallic</option>
+                </select>
+              </label>
+            </div>
+            <div class="engineering-grid" id="materialsGrid"></div>
+            <div class="stress-panel" id="stressPanel"></div>
+            <details open>
+              <summary>Did you know?</summary>
+              <p id="materialsDidYouKnow">A stronger material can still make a worse rocket if the extra dry mass destroys mass ratio.</p>
+            </details>
+          </div>
+          <div class="engineering-card" id="fuelLab">
+            <div class="subpanel-head">
+              <span>Fuel engineering</span>
+              <strong id="fuelLabTitle">Density vs efficiency</strong>
+            </div>
+            <div class="engineering-grid" id="fuelGrid"></div>
+            <details>
+              <summary>Student intuition</summary>
+              <p id="fuelLabCopy">Dense fuels help first stages stay compact. Efficient fuels help upper stages after the atmosphere and gravity losses are mostly behind you.</p>
+            </details>
+          </div>
+          <div class="mission-tip" id="missionTip"></div>
+          <div class="lab-coach" id="labCoach">
+            <div>
+              <span>Coach move</span>
+              <strong id="coachMove">Change one variable, then predict the outcome.</strong>
+            </div>
+            <p id="coachWhy">The lab works best when you isolate one cause and watch the flight result.</p>
+          <button id="coachAsk" class="ghost-button" type="button">Ask agent why</button>
+          </div>
+          <div class="challenge-card" id="challengeCard">
+            <div class="challenge-head">
+              <strong id="challengeTitle">Orbit challenge</strong>
+              <span id="challengeScore">0 / 4 checks</span>
+            </div>
+            <div class="challenge-list" id="challengeList"></div>
+          </div>
+          <div class="delta-strip" id="deltaStrip" aria-label="Live physics change from mission baseline">
+            <div><span>Δv change</span><strong id="deltaDv">0 m/s</strong></div>
+            <div><span>T/W change</span><strong id="deltaTwr">0.00</strong></div>
+            <div><span>Max-Q change</span><strong id="deltaQ">0 kPa</strong></div>
+            <div><span>Risk change</span><strong id="deltaRisk">0%</strong></div>
+          </div>
+          <div class="mission-readout">
+            <div>
+              <span>Goal speed</span>
+              <strong id="goalVelocity">7.80 km/s</strong>
+            </div>
+            <div>
+              <span>Flight result</span>
+              <strong id="flightStatus">Ready</strong>
+            </div>
+          </div>
+          <div class="lab-actions">
+            <button id="launchTest" class="primary-button">Launch test</button>
+            <button id="resetFlight" class="ghost-button">Reset run</button>
+            <button id="restoreDefaults" class="ghost-button">Safe default</button>
+            <button id="tutorialDemo" class="ghost-button">Demo mode</button>
+            <button id="downloadFailures" class="ghost-button">Failure PDF <span id="failureCount">0</span></button>
+          </div>
+          <div class="warning-stack" id="warningStack" aria-live="polite"></div>
+          <div class="control-strip" aria-label="Flight tuning controls">
+            <div class="slider-row">
+              <label for="payloadSlider">Payload</label>
+              <output id="payloadValue">48.6 t</output>
+              <input id="payloadSlider" type="range" min="0" max="160" value="48.6" step="0.5" />
+            </div>
+            <div class="slider-row">
+              <label for="fuelSlider">Fuel</label>
+              <output id="fuelValue">100%</output>
+              <input id="fuelSlider" type="range" min="35" max="100" value="100" step="1" />
+            </div>
+            <div class="slider-row">
+              <label for="dragSlider">Drag</label>
+              <output id="dragValue">1.00x</output>
+              <input id="dragSlider" type="range" min="0.65" max="1.8" value="1" step="0.05" />
+            </div>
+            <div class="slider-row">
+              <label for="windSlider">Wind</label>
+              <output id="windValue">20%</output>
+              <input id="windSlider" type="range" min="0" max="1" value="0.2" step="0.05" />
+            </div>
+            <div class="slider-row">
+              <label for="guidanceSlider">Guidance</label>
+              <output id="guidanceValue">8%</output>
+              <input id="guidanceSlider" type="range" min="0" max="1" value="0.08" step="0.04" />
+            </div>
+            <div class="slider-row">
+              <label for="engineHealthSlider">Engines</label>
+              <output id="engineHealthValue">100%</output>
+              <input id="engineHealthSlider" type="range" min="45" max="110" value="100" step="1" />
+            </div>
+            <div class="slider-row">
+              <label for="structureSlider">Structure</label>
+              <output id="structureValue">100%</output>
+              <input id="structureSlider" type="range" min="45" max="115" value="100" step="1" />
+            </div>
+            <div class="slider-row">
+              <label for="heatShieldSlider">Heat shield</label>
+              <output id="heatShieldValue">100%</output>
+              <input id="heatShieldSlider" type="range" min="35" max="110" value="100" step="1" />
+            </div>
+            <div class="slider-row">
+              <label for="stagingSlider">Staging</label>
+              <output id="stagingValue">0 s</output>
+              <input id="stagingSlider" type="range" min="-12" max="12" value="0" step="1" />
+            </div>
+          </div>
+          <div class="graph-insight" id="graphInsight">
+            <div>
+              <span id="graphInsightKicker">Graph explains</span>
+              <strong id="graphInsightTitle">Why this still flies</strong>
+              <p id="graphInsightCopy">Change one control and the graph will explain the constraint you just moved.</p>
+            </div>
+            <code id="graphInsightEquation">Δv = Isp · g0 · ln(m0 / mf)</code>
+            <button id="focusGraph" class="ghost-button" type="button">Show graph</button>
+          </div>
+          <div class="threshold-bar">
+            <span id="payloadBar"></span>
+          </div>
+          <div class="goal-bar">
+            <span id="goalBar"></span>
+          </div>
+          <div class="control-cues" id="controlCues"></div>
+          <p class="flight-note" id="failureReason">Tune the rocket, then run a launch test.</p>
+        </section>
+
+        <section class="blueprint-card" id="blueprintLab">
+          <div class="panel-header">
+            <h2>Blueprint lab</h2>
+            <span id="blueprintStatus">Draft</span>
+          </div>
+          <div class="blueprint-toolbar" role="group" aria-label="Blueprint overlay">
+            <button data-blueprint-layer="structure" class="active" type="button">Frame</button>
+            <button data-blueprint-layer="forces" type="button">Forces</button>
+            <button data-blueprint-layer="fuel" type="button">Fuel</button>
+            <button data-blueprint-layer="thermal" type="button">Heat</button>
+            <button data-blueprint-layer="orbit" type="button">Orbit</button>
+          </div>
+          <div class="blueprint-canvas" id="blueprintCanvas" data-layer="structure" aria-label="Interactive rocket blueprint">
+            <div class="blueprint-grid" aria-hidden="true"></div>
+            <div class="blueprint-dimension height"><span id="blueprintHeight">79 m</span></div>
+            <div class="blueprint-dimension width"><span id="blueprintWidth">4.2 m</span></div>
+            <div class="blueprint-rocket" id="blueprintRocket" aria-hidden="true"></div>
+            <div class="blueprint-force up"><span>thrust</span></div>
+            <div class="blueprint-force down"><span>weight</span></div>
+            <div class="blueprint-orbit-arc"><span>target path</span></div>
+          </div>
+          <div class="blueprint-metrics" id="blueprintMetrics"></div>
+          <div class="blueprint-controls" aria-label="Blueprint design controls">
+            <label>
+              <span>Stages</span>
+              <select id="blueprintStages">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </label>
+            <label>
+              <span>Boosters</span>
+              <select id="blueprintBoosters">
+                <option value="0">0</option>
+                <option value="1">2</option>
+                <option value="2">4</option>
+              </select>
+            </label>
+            <label>
+              <span>Engines</span>
+              <input id="blueprintEngines" type="range" min="1" max="33" value="12" step="1" />
+              <output id="blueprintEnginesValue">12</output>
+            </label>
+            <label>
+              <span>Width</span>
+              <input id="blueprintDiameter" type="range" min="1.2" max="9" value="4.2" step="0.2" />
+              <output id="blueprintDiameterValue">4.2 m</output>
+            </label>
+            <label>
+              <span>Engine</span>
+              <select id="blueprintEngineModel">
+                <option value="merlin">Merlin</option>
+                <option value="raptor">Raptor</option>
+                <option value="be4">BE-4</option>
+                <option value="rd180">RD-180</option>
+                <option value="rs25">RS-25</option>
+                <option value="vinci">Vinci upper</option>
+                <option value="archimedes">Archimedes</option>
+                <option value="aeonr">Aeon R</option>
+                <option value="f1">F-1</option>
+                <option value="rutherford">Small</option>
+              </select>
+            </label>
+            <label>
+              <span>Fuel</span>
+              <select id="blueprintUpper">
+                <option value="kerolox">RP-1</option>
+                <option value="methalox">CH4</option>
+                <option value="cryo">LH2</option>
+              </select>
+            </label>
+            <label>
+              <span>Skin</span>
+              <select id="blueprintSkin">
+                <option value="aluminum-lithium">Al-Li</option>
+                <option value="stainless-steel">Steel</option>
+                <option value="carbon-composite">Carbon</option>
+                <option value="titanium">Titanium</option>
+              </select>
+            </label>
+            <label>
+              <span>Heat</span>
+              <select id="blueprintShield">
+                <option value="ablative">Ablative</option>
+                <option value="ceramic">Ceramic</option>
+                <option value="thin-silica">Thin silica</option>
+                <option value="metallic">Metallic</option>
+              </select>
+            </label>
+          </div>
+          <div class="blueprint-checklist" id="blueprintChecklist"></div>
+          <div class="blueprint-didyouknow" id="blueprintDidYouKnow">
+            Click an overlay first. Then change one design value and watch the warning move.
+          </div>
+          <div class="blueprint-actions">
+            <button id="blueprintAsk" class="ghost-button" type="button">Ask tutor</button>
+            <button id="blueprintSend" class="primary-button" type="button">Send to launch</button>
+          </div>
+        </section>
+
+        <section class="physics-card" id="physicsBoard">
+          <div class="panel-header">
+            <h2>Physics board</h2>
+            <span id="phaseLabel">Liftoff</span>
+          </div>
+          <div class="equation-primer" id="equationPrimer">
+            <div>
+              <span>Start here</span>
+              <strong id="primerTitle">One launch is four equations fighting each other.</strong>
+              <p id="primerCopy">First beat gravity, then protect the structure, then spend mass efficiently enough to reach the mission speed.</p>
+            </div>
+            <ol>
+              <li><b>T/W</b><em>Can it lift?</em></li>
+              <li><b>q</b><em>Will air break it?</em></li>
+              <li><b>Δv</b><em>Can it finish?</em></li>
+            </ol>
+          </div>
+          <div class="graph-guide">
+            <span><i style="--dot:#f6b14a"></i>Velocity</span>
+            <span><i style="--dot:#9fc7e8"></i>Altitude</span>
+            <span><i style="--dot:#ffb454"></i>Air load</span>
+          </div>
+          <canvas id="graphCanvas" width="340" height="150" aria-label="Rocket physics graph"></canvas>
+          <p class="graph-caption" id="graphCaption">The vertical marker is current simulation time. Watch the orange air-load curve: it peaks before top speed.</p>
+          <div class="latex-display" id="latexDisplay"></div>
+          <a class="equation-link" href="./assets/rocket-equations.pdf" target="_blank" rel="noreferrer">Compiled LaTeX sheet</a>
+          <div class="equation-grid" id="equationGrid"></div>
+          <div class="why-box">
+            <strong>Why this works</strong>
+            <p id="whyText"></p>
+          </div>
+        </section>
+
+        <section class="lesson-card" id="learningLab">
+          <div class="panel-header">
+            <h2 id="lessonTitle">Rocket anatomy</h2>
+            <span id="lessonTime">8 min</span>
+          </div>
+          <p id="lessonBody"></p>
+          <div class="lesson-steps" id="lessonSteps"></div>
+          <div class="lesson-actions">
+            <button id="prevLesson" class="ghost-button">Previous</button>
+            <button id="nextLesson" class="primary-button">Next step</button>
+          </div>
+        </section>
+
+        <section class="compare-card" id="compareLab">
+          <div class="panel-header">
+            <h2>Compare launches</h2>
+            <span>delta-v vs mass</span>
+          </div>
+          <div class="compare-grid" id="compareGrid"></div>
+        </section>
+
+        <section class="concept-card">
+          <div class="panel-header">
+            <h2>Concept lab</h2>
+            <span id="conceptMastery">0 / 6 mastered</span>
+          </div>
+          <div class="concept-stack">
+            <div class="concept-block">
+              <span>Look at</span>
+              <strong id="conceptAnchor">The selected stage</strong>
+              <p id="conceptAnchorCopy">This is the visible part that makes the lesson concrete.</p>
+            </div>
+            <div class="concept-block equation">
+              <span>Equation intuition</span>
+              <strong id="conceptEquation">F = m · a</strong>
+              <p id="conceptEquationCopy">The math should explain what the rocket is visibly doing.</p>
+            </div>
+            <div class="concept-block try">
+              <span>Try now</span>
+              <strong id="conceptTry">Move one control and predict the result.</strong>
+              <p id="conceptTryCopy">The simulator will expose the tradeoff immediately.</p>
+              <button id="applyConceptExperiment" class="ghost-button" type="button">Run mini experiment</button>
+            </div>
+            <div class="concept-block misconception">
+              <span>Common trap</span>
+              <strong id="conceptMisconception">More thrust is not always the whole answer.</strong>
+              <p id="conceptMisconceptionCopy">Good rocket design is usually a trade between mass, heating, control, and margin.</p>
+            </div>
+          </div>
+          <div class="mastery-box">
+            <strong id="masteryQuestion">What changes first?</strong>
+            <div id="masteryChoices" class="mastery-choices"></div>
+            <p id="masteryFeedback">Pick an answer to make the lesson stick.</p>
+          </div>
+        </section>
+
+        <section class="trajectory-card" id="trajectoryPlanner">
+          <div class="panel-header">
+            <h2>Trajectory planner</h2>
+            <span id="trajectoryStatus">Moon transfer</span>
+          </div>
+          <div class="destination-tabs" role="group" aria-label="Destination">
+            <button data-destination="moon" class="active" type="button">Moon</button>
+            <button data-destination="mars" type="button">Mars</button>
+            <button data-destination="jupiter" type="button">Jupiter</button>
+          </div>
+          <div class="solar-map" id="solarMap" data-destination="moon" aria-label="Solar system transfer view">
+            <span class="sun"></span>
+            <span class="orbit earth-orbit"></span>
+            <span class="orbit mars-orbit"></span>
+            <span class="orbit jupiter-orbit"></span>
+            <span class="planet earth"></span>
+            <span class="planet target"></span>
+            <span class="transfer-arc"></span>
+            <span class="spacecraft" id="spacecraftMarker"></span>
+            <span class="signal-line"></span>
+          </div>
+          <div class="trajectory-phase-rail" id="trajectoryPhaseRail" aria-label="Mission phases"></div>
+          <div class="trajectory-readout">
+            <div><span>Transit</span><strong id="trajectoryTransit">3 days</strong></div>
+            <div><span>Transfer Δv</span><strong id="trajectoryDv">3.2 km/s</strong></div>
+            <div><span>Window</span><strong id="trajectoryWindow">Daily-ish</strong></div>
+          </div>
+          <div class="trajectory-controls" aria-label="Trajectory controls">
+            <label>
+              <span>Launch window</span>
+              <output id="windowValue">0 d</output>
+              <input id="windowSlider" type="range" min="-40" max="40" value="0" step="1" />
+            </label>
+            <label>
+              <span>Mid-course burn</span>
+              <output id="correctionValue">50%</output>
+              <input id="correctionSlider" type="range" min="0" max="100" value="50" step="5" />
+            </label>
+            <label>
+              <span>Landing site</span>
+              <select id="landingSite">
+                <option value="safe" selected>Safe ellipse</option>
+                <option value="science">Science target</option>
+                <option value="steep">Steep entry</option>
+              </select>
+            </label>
+          </div>
+          <div class="trajectory-deep-grid" id="trajectoryDeepGrid"></div>
+          <div class="trajectory-problem-grid" id="trajectoryProblemGrid"></div>
+          <div class="trajectory-quiz" id="trajectoryQuiz">
+            <span id="trajectoryQuizKicker">Mission check</span>
+            <strong id="trajectoryQuizQuestion">What does a launch window control?</strong>
+            <div id="trajectoryQuizChoices"></div>
+            <p id="trajectoryQuizFeedback">Pick an answer before planning the burn.</p>
+          </div>
+          <p id="trajectoryCopy">Raise apogee until the spacecraft intersects the Moon's orbit, then clean up the arrival.</p>
+          <div class="trajectory-actions">
+            <button id="planTrajectory" class="primary-button" type="button">Plan burn</button>
+            <button id="askTrajectoryAgent" class="ghost-button" type="button">Solve with agent</button>
+          </div>
+        </section>
+
+        <section class="part-card">
+          <div class="panel-header">
+            <h2 id="selectedPartName">S-IC first stage</h2>
+            <span id="selectedPartType">Propulsion</span>
+          </div>
+          <p id="selectedPartDescription"></p>
+          <div class="stat-grid" id="statGrid"></div>
+          <div class="recovery-card" id="recoveryCard" hidden>
+            <div>
+              <span>SpaceX booster drop</span>
+              <strong id="recoveryDropTime">~6 min</strong>
+            </div>
+            <p id="recoveryCopy">Average reusable booster descent estimate.</p>
+          </div>
+          <div class="part-locator">
+            <div class="locator-track" aria-hidden="true">
+              <span id="locatorMarker"></span>
+              <span id="locatorFuel"></span>
+              <span id="locatorPayload"></span>
+            </div>
+            <div>
+              <strong id="locatorPosition">Stack position</strong>
+              <span id="locatorCopy">Shows where the selected hardware sits inside the launch vehicle.</span>
+            </div>
+          </div>
+          <div class="hardware-grid" id="hardwareGrid"></div>
+          <div class="failure-map" id="failureMap"></div>
+          <div class="equation-box">
+            <span id="equationLabel">Newton's second law</span>
+            <strong id="equationText">F = m · a</strong>
+            <p id="equationExplanation"></p>
+          </div>
+        </section>
+
+        <section class="case-card">
+          <div class="panel-header">
+            <h2 id="caseTitle">Optimization lens</h2>
+            <span id="caseBadge">Systems</span>
+          </div>
+          <div class="case-grid" id="caseGrid"></div>
+          <div class="effect-reel" aria-label="Animated physics states">
+            <div class="effect-cell" id="effectIgnition">
+              <i class="effect-sprite ignition" aria-hidden="true"></i>
+              <strong>Ignition</strong>
+              <span>Engine start</span>
+            </div>
+            <div class="effect-cell" id="effectMaxQ">
+              <i class="effect-sprite maxq" aria-hidden="true"></i>
+              <strong>Max-Q</strong>
+              <span>Air load</span>
+            </div>
+            <div class="effect-cell" id="effectStaging">
+              <i class="effect-sprite staging" aria-hidden="true"></i>
+              <strong>Staging</strong>
+              <span>Mass drop</span>
+            </div>
+            <div class="effect-cell" id="effectHeating">
+              <i class="effect-sprite heating" aria-hidden="true"></i>
+              <strong>Heating</strong>
+              <span>Thermal load</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="agent-card" id="agentRuntime">
+          <div class="agent-head">
+            <div class="agent-orb" id="agentOrb" aria-hidden="true"></div>
+          <div>
+              <h2>Vector companion</h2>
+              <p id="agentStatus">Ask about the live rocket scene</p>
+            </div>
+          </div>
+          <div class="agent-awareness" aria-label="Agent context">
+            <div>
+              <span>Mode</span>
+              <strong id="agentMode">Disconnected</strong>
+            </div>
+            <div>
+              <span>Aware of</span>
+              <strong id="agentContext">Saturn V / Orbit</strong>
+            </div>
+            <div>
+              <span>Launch sync</span>
+              <strong id="agentSync">Idle</strong>
+            </div>
+          </div>
+          <div class="agent-context-packet" id="agentContextPacket" aria-label="Live agent context packet">
+            <div class="packet-head">
+              <span>Context packet</span>
+              <strong>Scene + numbers loaded</strong>
+            </div>
+            <div class="packet-grid">
+              <button type="button"><span>Scene</span><strong>Saturn V</strong></button>
+              <button type="button"><span>Blocker</span><strong>Ready</strong></button>
+              <button type="button"><span>Equation</span><strong>T / W</strong></button>
+              <button type="button"><span>Next</span><strong>Test one change</strong></button>
+            </div>
+            <div class="packet-quality" aria-label="Agent session quality">
+              <span style="--fill:1"><i></i>Scene</span>
+              <span style="--fill:1"><i></i>Numbers</span>
+              <span style="--fill:.5"><i></i>Memory</span>
+              <span style="--fill:1"><i></i>Action</span>
+            </div>
+            <div class="packet-actions">
+              <button data-agent-context-action="blocker" type="button">Ask blocker</button>
+              <button data-agent-context-action="quiz" type="button">Quiz this</button>
+              <button data-agent-context-action="compare" type="button">Compare</button>
+            </div>
+          </div>
+          <div class="agent-presets" aria-label="Tutor session starters">
+            <button id="attachScene" type="button">Attach scene</button>
+            <button data-agent-preset="scene" type="button">Explain scene</button>
+            <button data-agent-preset="dossier" type="button">Dossier</button>
+            <button data-agent-preset="formula" type="button">Formula</button>
+            <button data-agent-preset="question" type="button">Quiz me</button>
+            <button id="agentStressTest" type="button">Stress test</button>
+          </div>
+          <div class="voice-companion" id="voiceCompanion" data-state="off" aria-label="AI voice companion controls">
+            <div>
+              <span>Voice companion</span>
+              <strong id="voiceStatus">Off</strong>
+              <em id="voicePersonaCopy">Witty expert. One observation, one reason, one next move.</em>
+            </div>
+            <div class="voice-style" aria-label="Companion personality">
+              <button data-voice-style="lab-partner" class="active" type="button">Witty</button>
+              <button data-voice-style="mission-control" type="button">Flight</button>
+              <button data-voice-style="socratic" type="button">Quiz</button>
+              <button data-voice-style="failure-analyst" type="button">Failure</button>
+            </div>
+            <button id="voiceToggle" type="button">Voice on</button>
+            <button id="voiceTalk" type="button">Talk</button>
+            <button id="voiceAuto" type="button">Auto launch</button>
+            <button id="voiceBrief" type="button">Brief me</button>
+            <button id="voiceRealtime" type="button">Realtime</button>
+          </div>
+          <div class="companion-loop" id="companionLoop" data-state="observe" aria-label="Live tutoring loop">
+            <div class="companion-loop-head">
+              <div>
+                <span>Live tutoring loop</span>
+                <strong>Observe → predict → test → explain</strong>
+              </div>
+              <button id="companionLoopRun" type="button">Run loop</button>
+            </div>
+            <div class="companion-loop-steps">
+              <span data-session-step="observe"><b>1</b>Observe</span>
+              <span data-session-step="predict"><b>2</b>Predict</span>
+              <span data-session-step="test"><b>3</b>Test</span>
+              <span data-session-step="explain"><b>4</b>Explain</span>
+            </div>
+            <p id="companionReadout">Watching the scene. Ask a question or run the loop for a guided micro-lesson.</p>
+          </div>
+          <div class="vector-plan" id="vectorPlan" data-state="ready" aria-label="Vector coaching plan">
+            <div class="vector-plan-head">
+              <div>
+                <span>Vector flight plan</span>
+                <strong id="vectorPlanTitle">Find the first bottleneck</strong>
+              </div>
+              <em id="vectorPlanEquation">T / W</em>
+            </div>
+            <div class="vector-plan-grid">
+              <div>
+                <span>Likely trap</span>
+                <strong id="vectorPlanTrap">Changing too many things at once.</strong>
+              </div>
+              <div>
+                <span>Next move</span>
+                <strong id="vectorPlanMove">Change one control, then rerun.</strong>
+              </div>
+            </div>
+            <div class="vector-plan-actions">
+              <button id="vectorPlanApply" type="button">Apply move</button>
+              <button id="vectorPlanVoice" type="button">Voice brief</button>
+            </div>
+          </div>
+          <div class="rehearsal-card" id="rehearsalCard" data-state="ready" aria-label="Vector rehearsal drill">
+            <div class="rehearsal-head">
+              <div>
+                <span>Vector rehearsal</span>
+                <strong id="rehearsalTitle">Predict the next failure</strong>
+              </div>
+              <button id="rehearsalNext" type="button">New drill</button>
+            </div>
+            <p id="rehearsalQuestion">Pick the control that best fixes the current rocket.</p>
+            <div class="rehearsal-choices" id="rehearsalChoices"></div>
+            <div class="rehearsal-feedback" id="rehearsalFeedback">Answer first, then ask Vector to explain the physics.</div>
+            <button id="rehearsalAsk" type="button">Ask Vector to coach this</button>
+          </div>
+          <div class="agent-stress-card" id="agentStressCard" data-state="idle">
+            <span>Stress test</span>
+            <strong>Not run yet</strong>
+            <p>Runs context check, failure chain, and quiz prompts against the live scene.</p>
+          </div>
+          <div class="agent-log" id="agentLog" aria-live="polite"></div>
+          <form class="agent-prompt" id="agentPromptForm">
+            <input id="agentPrompt" type="text" autocomplete="off" placeholder="Ask about this scene or reply to the tutor..." />
+            <button id="agentSend" class="primary-button" type="submit">Ask</button>
+          </form>
+        </section>
+      </aside>
+    </div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

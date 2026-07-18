@@ -1,0 +1,15 @@
+Rocket Agent Lab — Realtime route parity proof
+Date: 2026-07-18
+
+Change
+- Extended test/realtime-session.test.mjs with a no-network regression check over both Realtime route sources.
+- The check fails if either local server.mjs or Vercel api/realtime-call.js stops using buildRealtimeSessionConfig(), voiceStyle, or voiceContext.
+
+Verification
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs: 2 passed, 0 failed.
+- node --check app.js; node --check server.mjs; node --check realtime-session.mjs; node --check api/realtime-call.js: passed.
+- Local node server.mjs plus GET /: HTTP 200; Rocket Agent Lab marker present.
+
+Boundary
+- No OpenAI request, microphone permission, WebRTC session, deployment, or external mutation was performed.
+- HUMAN_TEST remains BLOCKED until one authorized connected session records grounded opening and changed-state responses.

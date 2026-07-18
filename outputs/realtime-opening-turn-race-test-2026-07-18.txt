@@ -1,0 +1,20 @@
+Rocket Agent Lab — Realtime opening-turn race regression proof
+Date: 2026-07-18
+
+Change verified:
+- The Realtime data-channel open handler defers the opening tutor request until the state-backed live sender is ready.
+- After SDP setup, the client retries that opening request once; a guard prevents a duplicate request if the channel opened later.
+
+Commands passed:
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+  Result: 3 passed, 0 failed.
+- node --check app.js
+- node --check realtime-context.mjs
+- node --check realtime-session.mjs
+- node --check server.mjs
+- PORT=5193 node server.mjs with local GET /
+  Result: HTTP 200; Rocket Agent Lab marker present.
+
+Boundary:
+- This is no-network source-level regression evidence. It does not prove a real Realtime response, microphone permission, or WebRTC session.
+- HUMAN_TEST remains BLOCKED pending one authorized human session recorded in realtime-human-test-evidence-template.md.

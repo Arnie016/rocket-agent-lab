@@ -1,0 +1,23 @@
+Rocket Agent Lab hourly builder — submission checklist proof
+Run: 2026-07-18T03:22:46+08:00
+
+Bounded change
+- Added SUBMISSION_CHECKLIST.md as the current Build Week gate ledger.
+- It records the deadline, required submission gates, truthful evidence states,
+  and the closest missing gate without claiming a human voice test passed.
+
+Verification
+- Required checklist headings verified with rg:
+  Build and run proof; Primary / feedback Session ID; GPT-5.6 contribution;
+  Demo video; Repository URL and visibility; README setup and collaboration
+  disclosure; Devpost draft; Human test; Final-submit gate; Closest missing gate.
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs
+  PASS: 2 tests, 0 failures.
+- node --check app.js PASS.
+- node --check server.mjs PASS.
+- node server.mjs with bounded readiness retry; HTTP GET / at
+  http://127.0.0.1:5186 returned 200 and contained "Rocket Agent Lab".
+
+HUMAN_TEST=BLOCKED
+Closest missing gate: one authorized microphone/WebRTC session proving that
+opening and subsequent spoken turns reflect the selected and changed lab state.

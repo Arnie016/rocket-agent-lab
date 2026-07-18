@@ -1,0 +1,23 @@
+Rocket Agent Lab — Realtime data-channel causal event proof
+Run: 2026-07-18T00:22:16+08:00
+
+Change
+- Added buildRealtimeTutorTurnEvents(), a pure no-network builder for the subsequent Realtime data-channel message and response request.
+- requestRealtimeResponse() now uses that builder, so the tested event is the event sent by the browser.
+
+Verified
+- node --test test/realtime-context.test.mjs test/realtime-session.test.mjs
+  PASS: 2 tests, 0 failures.
+  The causal-event assertion verifies mission-control, Saturn V, F-1-class engine,
+  Max-Q lesson, changed phase/T-W/altitude/Max-Q, and live app context appear in
+  the conversation.item.create input_text; it rejects stale T/W 1.42.
+- node --check app.js
+  PASS.
+- node --check realtime-context.mjs
+  PASS.
+- node --check server.mjs
+  PASS.
+- Temporary local server smoke: GET / returned HTTP 200.
+
+Boundary
+- No microphone, WebRTC, or OpenAI network call was made. This is local transport-payload evidence only.

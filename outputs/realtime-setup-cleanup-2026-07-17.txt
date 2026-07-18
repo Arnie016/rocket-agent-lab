@@ -1,0 +1,24 @@
+Rocket Agent Lab — Realtime setup cleanup proof
+Run: 2026-07-17T22:46:18+08:00
+
+Change
+- Added `releaseRealtimeResources` and use it when microphone/WebRTC session setup fails before ownership reaches app state.
+- Failed setup now closes the temporary peer connection and stops every acquired microphone track, so the learner can retry cleanly.
+
+No-network checks
+$ node --test test/realtime-session.test.mjs test/realtime-context.test.mjs
+PASS: cleanup closes the peer connection, stops all tracks, tolerates already-released resources, and existing causal opening/subsequent context proof remains green.
+
+Syntax checks
+$ node --check app.js
+$ node --check realtime-session.mjs
+PASS
+
+Local HTTP smoke
+$ PORT=5198 node server.mjs
+$ curl http://127.0.0.1:5198/
+HTTP_STATUS=200
+INDEX_BYTES=55257
+
+Human test state
+- Not run. An authorized microphone/WebRTC session is still required to prove the live Realtime opening and a later scene-change turn.
