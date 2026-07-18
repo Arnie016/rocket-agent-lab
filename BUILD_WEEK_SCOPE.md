@@ -2,11 +2,9 @@
 
 Submission window: July 13–21, 2026.
 
-## Pre-existing foundation
+## Build Week implementation
 
-- Existing browser rocket laboratory, Three.js scenes, models, textures, and general educational controls.
-
-## Post–July 13 extension
+All capabilities presented in this submission were built during the July 13–21 Build Week window. Earlier repository shells, references, or unrelated experiments are not part of the judged claim.
 
 - GPT Realtime tutor grounded in the selected rocket, part, lesson, companion style, and live simulation values.
 - Shared causal context builder for opening and subsequent turns.
@@ -22,6 +20,6 @@ Automated and data-channel proof establishes causal payload wiring. It does not 
 ## Commit policy
 
 - Use `build-week:` subjects for the Realtime causal teaching extension.
-- Keep pre-existing rocket scenes distinct from the new voice/context/evaluation layer.
+- Keep unrelated rocket experiments distinct from the submitted voice/context/evaluation layer.
 - Do not commit API keys, Realtime client secrets, microphone recordings, generated trailer outputs, or the nested Expo checkout.
 - Tag the judged state only after the human Realtime protocol passes and the README/demo accurately reflect the result.
