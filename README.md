@@ -1,5 +1,7 @@
 # Rocket Agent Lab
 
+Source is publicly available for Build Week judging under [`LICENSE.md`](LICENSE.md); redistribution and commercial reuse are not granted.
+
 Interactive 3D rocket education prototype with nine Three.js rocket models, structured lessons, part picking, focused/all label modes, live challenge checklists, before/after slider impact readouts, physics equations, hardware/cost/failure breakdowns, WhatsApp sharing, and Astra, an OpenAI Realtime voice tutor with a prompt bar for scene-aware questions and replies.
 
 The Build Week judge path is deliberately short: open Flight, press **Run engine-out**, inspect the deterministic before/after proof, then ask Realtime to coach from that exact receipt. The proof remains available without an API key; live voice requires a server-side key.
