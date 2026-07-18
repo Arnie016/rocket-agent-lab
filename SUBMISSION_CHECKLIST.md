@@ -5,12 +5,12 @@ Deadline: **July 21, 2026, 5:00 PM PT**. This is a live status ledger, not a cla
 | Gate | Status | Evidence / next action |
 | --- | --- | --- |
 | Build and run proof | Local proof present | `node server.mjs` serves the app at `http://127.0.0.1:5186`; latest cleanup-path proof: `outputs/realtime-live-close-cleanup-test-2026-07-18.txt`. Re-run before handoff. |
-| Primary / feedback Session ID | Missing | Record the exact Codex session ID used for the feedback pass. |
-| GPT-5.6 contribution | Missing documentation | Record one meaningful GPT-5.6 task, exact session ID, the changed files, and the human decision that accepted or corrected it. Do not use a generic model claim. |
+| Primary / feedback Session ID | Recorded; final `/feedback` retrieval still required | Primary build task: `019f5e81-8bde-79d1-b2d6-416776726a63`. Retrieve it through `/feedback` immediately before final submission. |
+| GPT-5.6 contribution | Documented | `README.md`, `DEVPOST_DRAFT.md`, and `DEVPOST_VOICE_NOTES.md` record the causal-context/evaluator contribution and the human decisions that constrained it. |
 | Demo video | Draft asset exists; human action required | Existing local trailer: `trailer/out/rocket-agent-lab-trailer.mp4`. Before recording/uploading, prepare a <3 min outline that shows the running causal voice path and Codex/GPT-5.6 contribution. No autonomous publishing. |
-| Repository URL and visibility | Unknown | Verify URL, private/public state, and license/provenance. Before any public-release recommendation, complete a secret/privacy/license/copy-risk audit. If private, a human must grant judge access to `testing@devpost.com` and `build-week-event@openai.com`. |
-| README setup and collaboration disclosure | Partial | README documents local setup and Realtime route. Add accurate pre-/post-July-13 scope, test/proof links, and documented human/Codex/GPT-5.6 decisions before submission. |
-| Devpost draft | Not ready | Keep all prose `HUMAN_EDIT_REQUIRED`; preserve founder language in `DEVPOST_VOICE_NOTES.md` before drafting. |
+| Repository URL and visibility | PASS — public | `https://github.com/Arnie016/rocket-agent-lab`. Public access removes the private-repository email invitation requirement. Secret scan passed before push; commit email uses GitHub noreply. |
+| README setup and collaboration disclosure | PASS | README includes setup, platforms, judge smoke, post-July-13 scope, proof links, exact build task, and human/Codex/GPT-5.6 decisions. |
+| Devpost draft | Ready for read-aloud human edit | `DEVPOST_DRAFT.md` uses founder language and an honest failure/correction story. Project metadata is created through the Devpost plugin; do not final-submit before video and human voice gate. |
 | Human test | BLOCKED — required | Run one authorized microphone/WebRTC session: change rocket/part/style and a simulation slider; verify the opening and subsequent spoken replies name the current state. Capture only approved evidence in `outputs/realtime-human-test-evidence-template.md`. |
 | Team members | N/A | No collaborators recorded. |
 | Final-submit gate | BLOCKED | Do not submit until every row above is evidenced and Arnav explicitly approves final submission. |
