@@ -1,11 +1,20 @@
 # Rocket Agent Lab
 
 **Category:** Education  
-**Tagline:** Break a rocket on purpose, see exactly why it failed, and have a Realtime tutor coach the next engineering move.
+**Tagline:** Break a rocket on purpose, see exactly why it failed, and have a Realtime tutor coach the next engineering move.  
+**Tag suggestions:** education, rockets, space technology, three.js, simulators, interactive simulation, GPT Realtime, codex, gpt-5.6
+
+**Deploy:** https://www.youtube.com/watch?v=placeholder
 
 ## Why I built it
 
-I have always wanted to understand rockets at the level where one number changes and the whole vehicle stops making sense.
+I wanted to understand rockets at the level where one number changes and the whole vehicle suddenly shifts.
+
+I briefly considered chasing SpaceX shares, but private rounds were already priced and I did not want to be the kind of early investor who rushes in for hype alone.
+
+So I made Rocket Agent Lab instead: a project that teaches the same frontier thinking without needing to frontload capital.
+
+Think of it as a safer way to chase the rocket high: no leveraged margin calls, just launch, fail, and learn.
 
 People know the words Raptor, Max-Q, staging and thrust-to-weight. But most rocket education is still a diagram, a paragraph, or a video where the engineering decision has already been made for you. You cannot make the payload too heavy, lose an engine, watch the margins move and then ask why.
 
@@ -47,7 +56,7 @@ Every capability presented for judging was built after July 13, 2026. The July 1
 
 1. Install Node.js 20+ on macOS, Windows or Linux.
 2. Run `node server.mjs`.
-3. Open `http://127.0.0.1:5186`.
+3. Open the deployed app at `https://www.youtube.com/watch?v=placeholder` (or local fallback: `http://127.0.0.1:5186`).
 4. In Flight, press **Run engine-out**.
 5. Inspect the before/after receipt and press **Ask Realtime from this proof**.
 

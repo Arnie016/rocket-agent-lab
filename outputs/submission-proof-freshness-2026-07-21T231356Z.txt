@@ -1,0 +1,35 @@
+Rocket Agent Lab — submission proof freshness
+Run: 2026-07-21 23:13:56 :z
+
+Bounded change
+- Refreshed the local proof sweep tied to the nearest missing Human Realtime gate (blocked status remains).
+
+Checked command: node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+Causal engine lesson: deterministic before/after proof crosses the liftoff boundary and emits a grounded tutor event.
+✔ test/causal-engine-lesson.test.mjs (27.733333ms)
+Realtime client wiring: the SDP request uses the pure opening context, later data-channel turns take a fresh snapshot, early data-channel opens are retried once after the live state is ready, unexpected data-channel closure plus normal closure or peer-connection failures release local resources for a clean retry, the connected control exposes the exact human-test state, and an engine-out receipt enters the same causal Realtime path.
+✔ test/realtime-client-wiring.test.mjs (26.489375ms)
+Realtime causal context: opening instructions require the selected scene and voice-style ID, while subsequent instructions require the current changed state without stale live values; the data-channel event carries the updated state.
+✔ test/realtime-context.test.mjs (24.601041ms)
+Realtime cleanup and opening session config: failed setup releases local resources, session instructions retain selected voice style plus rocket, part, lesson, and simulation values, and both routes retain the shared causal session builder.
+✔ test/realtime-session.test.mjs (25.317583ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.570208
+
+Syntax checks: app.js realtime-context.mjs realtime-session.mjs server.mjs
+
+Build and run smoke
+HTTP / status: 200
+Local smoke marker: present
+
+Verified checks
+- node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs passed (4/4).
+- node --check app.js, realtime-context.mjs, realtime-session.mjs, server.mjs passed.
+- Temporary local node server.mjs smoke returned HTTP 200 and the  marker.
+- HUMAN_TEST remains BLOCKED; this run still needs an authorized live microphone/WebRTC session for the live-reply gate.

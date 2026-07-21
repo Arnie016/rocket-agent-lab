@@ -1,0 +1,25 @@
+Rocket Agent Lab — Realtime human-gate verification
+Run: 2026-07-20T08:22:15+08:00
+
+No product code was changed. The explicit current proof gate was checked before
+any unrelated polish: an authorized microphone/WebRTC session remains required.
+
+Verified locally (no network Realtime call):
+- node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+  Result: 4 passed, 0 failed.
+- node --check app.js
+- node --check realtime-context.mjs
+- node --check realtime-session.mjs
+- node --check server.mjs
+  Result: all passed.
+- node server.mjs plus curl http://127.0.0.1:5186/
+  Result: HTTP/1.1 200 OK; Rocket Agent Lab marker present.
+
+Meaning: the deterministic engine-out lesson, opening state, changed-state data
+channel prompt, and client wiring still have local causal proof. This is not
+evidence that a live model spoke a grounded response.
+
+HUMAN_TEST=BLOCKED
+Closest missing gate: one authorized microphone/WebRTC session, documented in
+outputs/realtime-human-test-evidence-template.md with both the selected-state
+opening response and a changed-slider or engine-out response.

@@ -1,0 +1,15 @@
+Rocket Agent Lab — submission proof freshness
+Run: 2026-07-20 16:23 +0800
+
+Bounded change
+- `SUBMISSION_CHECKLIST.md` Build and run proof now cites the newest verified causal-gate artifact: `outputs/realtime-human-gate-verification-2026-07-20-1608.txt`.
+
+Verified checks
+- `rg -n 'realtime-human-gate-verification-2026-07-20-1608\\.txt' SUBMISSION_CHECKLIST.md` found the expected ledger entry.
+- `node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed: 4/4.
+- `node --check app.js`, `node --check realtime-context.mjs`, `node --check realtime-session.mjs`, and `node --check server.mjs` passed.
+- Temporary `node server.mjs` local smoke returned HTTP 200 and the `Rocket Agent Lab` marker.
+- `git diff --check` passed.
+
+Limit
+- HUMAN_TEST=BLOCKED. These no-network/local checks do not prove a connected Realtime tutor response.

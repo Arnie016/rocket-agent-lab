@@ -1,0 +1,10 @@
+Realtime causal context: opening instructions require the selected scene and voice-style ID, while subsequent instructions require the current changed state without stale live values; the data-channel event carries the updated state.
+✔ test/realtime-context.test.mjs (44.533792ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.446125

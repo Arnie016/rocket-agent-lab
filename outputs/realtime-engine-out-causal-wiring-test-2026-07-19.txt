@@ -1,0 +1,21 @@
+Rocket Agent Lab — Realtime engine-out causal wiring proof
+Run: 2026-07-19T13:24:30+0800
+
+Bounded change
+- `test/realtime-client-wiring.test.mjs` now asserts that a completed deterministic
+  engine-out receipt is converted with `engineLessonTutorEvent()` and submitted via
+  `requestRealtimeResponse(event, "causal-engine-lesson")` when Realtime is connected.
+
+Verified checks
+- PASS node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+  Result: 4 tests passed, 0 failed.
+- PASS node --check app.js
+- PASS node --check realtime-context.mjs
+- PASS node --check server.mjs
+- PASS local GET http://127.0.0.1:5186/ returned HTTP=200 with `Rocket Agent Lab` marker.
+- PASS git diff --check
+
+Boundary
+- This is no-network source-level causal-path evidence only. HUMAN_TEST=BLOCKED:
+  one authorized microphone/WebRTC session must capture the opening selected-state
+  response and a later changed-slider or engine-out response.

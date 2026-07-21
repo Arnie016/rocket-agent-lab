@@ -1,0 +1,16 @@
+Rocket Agent Lab — Realtime human-gate verification
+Run at: 2026-07-20 16:08:44 +08
+
+No product code changed. The remaining causal-voice proof requires one authorized microphone/WebRTC session and cannot be established by this local run.
+
+Verified commands:
+- node --test test/causal-engine-lesson.test.mjs test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs
+  Result: 4 passed, 0 failed.
+- node --check app.js realtime-context.mjs realtime-session.mjs server.mjs
+  Result: passed.
+- temporary node server.mjs plus GET http://127.0.0.1:5186/
+  Result: HTTP/1.1 200 OK and body contained Rocket Agent Lab.
+- git diff --check
+  Result: passed.
+
+HUMAN_TEST=BLOCKED. Required evidence: the connected opening reply names the selected rocket, part, lesson, and voice style; a later reply names a changed slider or engine-out state.

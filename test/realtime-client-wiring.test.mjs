@@ -48,5 +48,10 @@ assert.match(
   /els\.voiceStatus\.textContent = state\.voiceRealtimeConnected\s*\? "Realtime live"/,
   "the connected companion control must expose the exact human-test connection state",
 );
+assert.match(
+  app,
+  /function askEngineOutTutor\(\) \{[\s\S]*?const event = engineLessonTutorEvent\(state\.engineLessonProof\);[\s\S]*?requestRealtimeResponse\(event, "causal-engine-lesson"\)/,
+  "the deterministic engine-out receipt must enter the same Realtime causal request path when connected",
+);
 
-console.log("Realtime client wiring: the SDP request uses the pure opening context, later data-channel turns take a fresh snapshot, early data-channel opens are retried once after the live state is ready, unexpected data-channel closure plus normal closure or peer-connection failures release local resources for a clean retry, and the connected control exposes the exact Realtime live human-test state.");
+console.log("Realtime client wiring: the SDP request uses the pure opening context, later data-channel turns take a fresh snapshot, early data-channel opens are retried once after the live state is ready, unexpected data-channel closure plus normal closure or peer-connection failures release local resources for a clean retry, the connected control exposes the exact human-test state, and an engine-out receipt enters the same causal Realtime path.");
