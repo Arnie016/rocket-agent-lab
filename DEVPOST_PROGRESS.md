@@ -2,6 +2,15 @@
 
 ## 2026-07-21 — Realtime proof refresh for gate tracking
 
+- Change: re-ran the no-network causal wiring checks and refreshed the closest submission-gate proof artifact with the same ledger-only scope.
+- Checks: `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` and `node --check app.js server.mjs` passed.
+- Proof: `outputs/submission-proof-freshness-2026-07-21T2001Z.txt`.
+- Blocker: `HUMAN_TEST=BLOCKED`; no authorized microphone/WebRTC session has been run this cycle.
+- Human test: complete `outputs/realtime-human-test-evidence-template.md` in one connected session; capture opening grounded and changed-state grounded responses.
+- Next move: run that one authorized microphone/WebRTC session, then refresh this checklist row and progress entry.
+
+## 2026-07-21 — Realtime proof refresh for gate tracking
+
 - Change: reran the no-network/CLI gate checks and refreshed the closest submission-gate proof artifact without app changes.
 - Checks: `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` and `node --check app.js server.mjs` passed.
 - Proof: `outputs/submission-proof-freshness-2026-07-21T1801Z.txt`.
