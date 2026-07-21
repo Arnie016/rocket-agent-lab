@@ -3186,7 +3186,9 @@ const programLenses = {
 const canvas = document.querySelector("#rocketCanvas");
 const graphCanvas = document.querySelector("#graphCanvas");
 const graphCtx = graphCanvas.getContext("2d");
-const qaMode = new URLSearchParams(window.location.search).has("qa");
+const queryParams = new URLSearchParams(window.location.search);
+const qaMode = queryParams.has("qa");
+const judgeEngineOut = queryParams.get("run") === "engine-out" || queryParams.has("engine-out") || queryParams.get("lesson") === "engine-out";
 let rocketScene = null;
 
 const AGENT_PERSONALITY = `
@@ -9768,6 +9770,11 @@ document.querySelector("#explodeToggle").classList.toggle("active", state.explod
 document.querySelector("#simToggle").classList.toggle("active", state.simRunning);
 document.querySelector("#labelToggle").classList.toggle("active", state.showLabels);
 guide("Click a part. Watch thrust, weight, drag, and the graph move together.", "Tutor");
+if (judgeEngineOut && !state.engineLessonProof) {
+  setFlightWorkspace("flight");
+  runEngineOutLesson();
+  guide("Judge readiness mode: deterministic engine-out proof is preloaded. Use Realtime tutor for grounded coaching when a server-side key is available.", "Judge");
+}
 if (qaMode) {
   let qaFrames = 0;
   const renderQaFrame = () => {

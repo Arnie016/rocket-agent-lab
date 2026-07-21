@@ -27,6 +27,9 @@ node --check app.js
 ```
 
 Then open the local app and run the engine-out lesson. Representative browser proof is stored at `outputs/rocket-agent-lab-engine-out-proof-card-2026-07-19.png`.
+Judge-ready no-key route:
+`http://127.0.0.1:5186?run=engine-out`
+visits with proof already computed from a deterministic engine-health drop to 67%.
 
 ## Run
 
