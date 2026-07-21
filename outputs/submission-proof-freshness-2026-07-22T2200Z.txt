@@ -1,0 +1,14 @@
+Realtime client wiring: the SDP request uses the pure opening context, later data-channel turns take a fresh snapshot, early data-channel opens are retried once after the live state is ready, unexpected data-channel closure plus normal closure or peer-connection failures release local resources for a clean retry, and the connected control exposes the exact Realtime live human-test state.
+✔ test/realtime-client-wiring.test.mjs (37.721709ms)
+Realtime causal context: opening instructions require the selected scene and voice-style ID, while subsequent instructions require the current changed state without stale live values; the data-channel event carries the updated state.
+✔ test/realtime-context.test.mjs (34.463333ms)
+Realtime cleanup and opening session config: failed setup releases local resources, session instructions retain selected voice style plus rocket, part, lesson, and simulation values, and both routes retain the shared causal session builder.
+✔ test/realtime-session.test.mjs (34.971333ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.79675

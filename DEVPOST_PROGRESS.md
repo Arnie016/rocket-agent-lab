@@ -1,5 +1,14 @@
 # Devpost Progress
 
+## 2026-07-22 — Realtime proof refresh for gate tracking
+
+- Change: refreshed the closest submission-gate proof artifacts without code changes; this keeps the review ledger aligned to the current run.
+- Checks: `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed (3/3).
+- Proof: `outputs/submission-proof-freshness-2026-07-22T2200Z.txt`.
+- Blocker: `HUMAN_TEST=BLOCKED`; no authorized microphone/WebRTC session has been run this cycle.
+- Human test: complete `outputs/realtime-human-test-evidence-template.md` in one connected session; capture opening grounded and changed-state grounded responses.
+- Next move: perform one authorized microphone/WebRTC session then re-run only this checklist row and progress entry.
+
 ## 2026-07-22 — Submission readiness proof refresh
 
 - Change: refreshed the closest submission-gate proof artifact without changing app behavior, to keep the checklist grounded in the current run.
