@@ -13,7 +13,7 @@ That is what I wanted to build: a rocket lab you can push until it fails, while 
 
 ## What it does
 
-Rocket Agent Lab is an interactive 3D engineering classroom with 57 rocket configurations, inspectable engines and structures, focused lessons, equations, launch tests and a scene-aware GPT Realtime tutor.
+Rocket Agent Lab is an interactive 3D engineering classroom with multiple rocket configurations, inspectable engines and structures, focused lessons, equations, launch tests and a scene-aware GPT Realtime tutor.
 
 The clearest demo is the causal engine lab. It holds the rocket configuration constant, changes engine health from 100% to 67%, then generates a deterministic before/after receipt. On Saturn V, the current classroom model moves T/W from 1.23 to 0.82 and marks the result **NO LIFTOFF**. Max-Q risk actually falls because the rocket never gets fast enough. That is an important distinction: a lower stress number does not mean the mission works.
 

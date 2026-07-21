@@ -14,4 +14,4 @@ Prepared from the live July 19 submission requirements. Do not final-submit unti
 
 Project: `https://devpost.com/software/rocket-agent-lab`  
 Project ID: `1350724`  
-Required missing deliverable: public YouTube demo under three minutes, with audio explaining the project plus Codex and GPT-5.6 use.
+Required missing deliverable: public YouTube demo under three minutes, with audio explaining the project plus Codex and GPT-5.6 use. Final link placeholder (before submit): https://www.youtube.com/watch?v=YOUR_VIDEO_ID
