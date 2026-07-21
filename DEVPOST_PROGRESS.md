@@ -1,5 +1,14 @@
 # Devpost Progress
 
+## 2026-07-22 — Submission readiness proof refresh
+
+- Change: refreshed the closest submission-gate proof artifact without changing app behavior, to keep the checklist grounded in the current run.
+- Checks: `node --check app.js`, `node --check server.mjs`, and `node --test test/realtime-context.test.mjs test/realtime-session.test.mjs test/realtime-client-wiring.test.mjs` passed (3/3).
+- Proof: `outputs/submission-proof-freshness-2026-07-22T2000Z.txt`.
+- Blocker: `HUMAN_TEST=BLOCKED`; no authorized microphone/WebRTC session has been run this cycle.
+- Human test: complete `outputs/realtime-human-test-evidence-template.md` during one connected session; capture both the opening selected-state response and the changed-slider response.
+- Next move: run that one authorized microphone/WebRTC session; do not add visual polish before it passes.
+
 ## 2026-07-18 — Realtime peer-failure retry cleanup
 
 - Change: a failed or disconnected WebRTC peer connection now releases the captured peer connection and microphone stream whether the Realtime companion had finished connecting or was still negotiating; intentional local close remains quiet. Added a no-network wiring assertion for this path.
